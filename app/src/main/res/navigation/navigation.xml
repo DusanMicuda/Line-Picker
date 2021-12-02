@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/importFragment">
+
+    <fragment
+        android:id="@+id/importFragment"
+        android:name="com.micudasoftware.linepicker.ImportFragment"
+        android:label="fragment_import"
+        tools:layout="@layout/fragment_import" >
+        <action
+            android:id="@+id/action_importFragment_to_randomizeFragment"
+            app:destination="@id/randomizeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/randomizeFragment"
+        android:name="com.micudasoftware.linepicker.RandomizeFragment"
+        android:label="fragment_randomize"
+        tools:layout="@layout/fragment_randomize" >
+        <action
+            android:id="@+id/action_randomizeFragment_to_exportFragment"
+            app:destination="@id/exportFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/exportFragment"
+        android:name="com.micudasoftware.linepicker.ExportFragment"
+        android:label="fragment_export"
+        tools:layout="@layout/fragment_export" />
+</navigation>
