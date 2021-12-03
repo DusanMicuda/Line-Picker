@@ -8,7 +8,7 @@
     tools:context=".ExportFragment">
 
     <ListView
-        android:id="@+id/listView"
+        android:id="@+id/exportListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,7 +20,7 @@
 
     <Button
         android:id="@+id/exportButton"
-        android:text="@string/exportButton"
+        android:text="@string/export_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
