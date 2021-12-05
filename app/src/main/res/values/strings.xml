@@ -5,4 +5,7 @@
     <string name="import_file_button">Import file</string>
     <string name="randomize_button">Randomize</string>
     <string name="export_button">Export to pdf</string>
+    <string name="column_word">%1$s</string>
+    <string name="column_pronunciation">%1$s</string>
+    <string name="column_translation">%1$s \n %2$s</string>
 </resources>

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -59,7 +60,7 @@ class ImportFragment : Fragment() {
      */
 
     private fun readExcelData(excelFile: Uri) {
-        val viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        val viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
         val inputStream = context?.contentResolver?.openInputStream(excelFile)
 
         val workbook: Workbook =
@@ -71,11 +72,15 @@ class ImportFragment : Fragment() {
 
         val sheet = workbook.getSheetAt(0)
         for (row: Row in sheet) {
+            Log.d("debugujem", "prechadzam riadky")
             when (row.rowNum) {
                 0 -> if (row.cellIterator().hasNext())
                     viewModel.assignment.value = row.cellIterator().next().stringCellValue
                 1 -> viewModel.header.value = row
-                else -> viewModel.rows.value?.add(row)
+                else -> {
+
+                    viewModel.rows.value?.add(row)
+                }
             }
         }
     }
