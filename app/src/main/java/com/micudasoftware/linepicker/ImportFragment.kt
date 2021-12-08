@@ -72,15 +72,11 @@ class ImportFragment : Fragment() {
 
         val sheet = workbook.getSheetAt(0)
         for (row: Row in sheet) {
-            Log.d("debugujem", "prechadzam riadky")
             when (row.rowNum) {
                 0 -> if (row.cellIterator().hasNext())
                     viewModel.assignment.value = row.cellIterator().next().stringCellValue
                 1 -> viewModel.header.value = row
-                else -> {
-
-                    viewModel.rows.value?.add(row)
-                }
+                else -> viewModel.rows.value?.add(row)
             }
         }
     }

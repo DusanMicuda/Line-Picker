@@ -16,13 +16,11 @@ class ListViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
 
     fun setRowData(row: Row) {
-        Log.d("debugujem", "ListViewHolder setRowData")
         val stringBuilder = StringBuilder()
         val iterator = row.cellIterator()
         while (iterator.hasNext()) {
 
             val cell = iterator.next()
-            Log.d("debugujem", "ListViewHolder "+cell.columnIndex)
             when (cell.columnIndex) {
                 1 -> columnWord.text = cell.stringCellValue
                 2 -> columnPronunciation.text = cell.stringCellValue
