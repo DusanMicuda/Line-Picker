@@ -11,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.micudasoftware.linepicker.databinding.FragmentImportBinding
@@ -21,9 +23,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 class ImportFragment : Fragment() {
 
-
-    private val xls = "application/vnd.ms-excel"
-    private val xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,53 +31,25 @@ class ImportFragment : Fragment() {
     ): View {
         val binding: FragmentImportBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_import, container, false)
-        binding.handler = this
+
+        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
+
+        viewModel.startResultLauncher.observe(viewLifecycleOwner, {
+            if (it) resultLauncher.launch(viewModel.intent)
+        })
+
         return binding.root
     }
 
     private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.let { data ->
-                readExcelData(data)
+                viewModel.readExcelData(data)
                 view?.let { Navigation.findNavController(it).navigate(R.id.action_importFragment_to_randomizeFragment) }
             }
         }
     }
 
-    fun importFile() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "*/*"
-        val mimetypes = arrayOf(xlsx, xls)
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes)
-
-        resultLauncher.launch(intent)
-    }
-
-    /*
-    3 stlpce, preklady rozdelit enterom, v subore 10 stlpcov, prve dva + 8 preklaadov
-    prvy riadok zadanie, druhy hlavicka
-     */
-
-    private fun readExcelData(excelFile: Uri) {
-        val viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
-        val inputStream = context?.contentResolver?.openInputStream(excelFile)
-
-        val workbook: Workbook =
-            when (context?.contentResolver?.getType(excelFile)) {
-                xls -> HSSFWorkbook(inputStream)
-                xlsx -> XSSFWorkbook(inputStream)
-                else -> return
-            }
-
-        val sheet = workbook.getSheetAt(0)
-        for (row: Row in sheet) {
-            when (row.rowNum) {
-                0 -> if (row.cellIterator().hasNext())
-                    viewModel.assignment.value = row.cellIterator().next().stringCellValue
-                1 -> viewModel.header.value = row
-                else -> viewModel.rows.value?.add(row)
-            }
-        }
-    }
 }

@@ -5,9 +5,8 @@
 
     <data>
         <variable
-            name="handler"
-            type="com.micudasoftware.linepicker.ImportFragment" />
-
+            name="viewModel"
+            type="com.micudasoftware.linepicker.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,7 +29,7 @@
         <Button
             android:id="@+id/importButton"
             android:text="@string/import_file_button"
-            android:onClick="@{() -> handler.importFile()}"
+            android:onClick="@{() -> viewModel.importFile()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
