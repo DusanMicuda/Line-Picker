@@ -47,6 +47,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun readExcelData(excelFile: Uri) {
         startResultLauncher.value = false
+        rows.value = ArrayList()
         val inputStream = getApplication<Application>().contentResolver?.openInputStream(excelFile)
 
         val workbook: Workbook =
