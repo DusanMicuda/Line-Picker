@@ -143,6 +143,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:inputType="number"
+                    android:textStyle="italic"
+                    android:hint="@{viewModel.hint}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/randomize"
                     app:layout_constraintStart_toStartOf="parent"

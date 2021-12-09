@@ -10,6 +10,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -21,7 +23,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val headerColumn1 = MutableLiveData<String>()
     val headerColumn2 = MutableLiveData<String>()
     val headerColumn3 = MutableLiveData<String>()
+    val hint = MutableLiveData<String>()
     val rows = MutableLiveData<ArrayList<Row>>()
+    val randomizedRows = MutableLiveData<ArrayList<Row>>()
+    val count = MutableLiveData<Int>()
 
     init {
         startResultLauncher.value = false
@@ -32,6 +37,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
 
         rows.value = ArrayList()
+
+        count.value = 0
     }
 
     fun importFile() {
@@ -82,5 +89,23 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 else -> rows.value?.add(row)
             }
         }
+        hint.value = getApplication<Application>().getString(R.string.hint, rows.value?.size)
+    }
+
+    fun randomize(count: Int): Boolean{
+        val cells = ArrayList(rows.value)
+        randomizedRows.value = ArrayList()
+
+        if (count < 1 || count > cells.size)
+            return false
+
+        for (i in 0 until count)
+        {
+            val rand = Random()
+            val index = rand.nextInt(cells.size)
+            randomizedRows.value?.add(cells[index])
+            cells.removeAt(index)
+        }
+        return true
     }
 }
