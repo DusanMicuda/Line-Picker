@@ -38,7 +38,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val xls = "application/vnd.ms-excel"
     private val xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    val startResultLauncher = MutableLiveData<Boolean>()
     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
     val assignment = MutableLiveData<String>()
     val headerColumn1 = MutableLiveData<String>()
@@ -50,8 +49,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val count = MutableLiveData<Int>()
 
     init {
-        startResultLauncher.value = false
-
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.type = "*/*"
         intent.putExtra(Intent.EXTRA_MIME_TYPES,  arrayOf(xlsx, xls))
@@ -62,10 +59,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         count.value = 0
     }
 
-    fun importFile() {
-        startResultLauncher.value = true
-    }
-
     fun getAssignmentVisibility() = if (assignment.value.isNullOrBlank()) View.GONE else View.VISIBLE
 
     fun getHeaderVisibility() = if (headerColumn1.value.isNullOrBlank() &&
@@ -74,7 +67,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                                         View.GONE else View.VISIBLE
 
     fun readExcelData(excelFile: Uri) {
-        startResultLauncher.value = false
         rows.value = ArrayList()
         val inputStream = getApplication<Application>().contentResolver?.openInputStream(excelFile)
 

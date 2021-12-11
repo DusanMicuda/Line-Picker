@@ -7,6 +7,9 @@
         <variable
             name="viewModel"
             type="com.micudasoftware.linepicker.MainViewModel" />
+        <variable
+            name="exportFragment"
+            type="com.micudasoftware.linepicker.ExportFragment" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -137,7 +140,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/export_button"
-                android:onClick="@{() -> viewModel.exportToPDF()}"
+                android:onClick="@{() -> exportFragment.checkPermission()}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
