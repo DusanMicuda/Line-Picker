@@ -1,15 +1,36 @@
 package com.micudasoftware.linepicker
 
 import android.app.Application
+import android.app.Notification
+import android.app.PendingIntent
+import android.content.ContentResolver
+import android.content.ContentValues
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.RectF
+import android.graphics.Typeface
+import android.graphics.pdf.PdfDocument
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.os.ParcelFileDescriptor
+import android.provider.MediaStore
+import android.text.Layout
+import android.text.StaticLayout
+import android.text.TextPaint
 import android.view.View
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import java.io.FileOutputStream
+import java.io.IOException
+import java.lang.StringBuilder
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -107,5 +128,175 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             cells.removeAt(index)
         }
         return true
+    }
+
+    fun exportToPDF() {
+        val pdfDocument = PdfDocument()
+
+        val textPaint = TextPaint(Color.BLACK)
+        textPaint.textSize = 14f
+
+        val assignmentPaint = TextPaint(Color.BLACK)
+        assignmentPaint.textSize = 16f
+        assignmentPaint.typeface = Typeface.DEFAULT_BOLD
+
+        val pageHeight = 842
+        val pageWidth = 595
+        var pageNumber = 1
+
+        var myPage = pdfDocument.startPage(
+            PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pageNumber).create()
+        )
+
+        var canvas = myPage.canvas
+        canvas.drawBitmap(
+            BitmapFactory.decodeResource(getApplication<Application>().resources, R.drawable.logo),
+            null,
+            RectF(247F, 770F, 347F, 820F),
+            null)
+
+        var height = 50
+        canvas.translate(50f, 50f)
+
+        if (getAssignmentVisibility() == View.VISIBLE) {
+            val staticLayout = StaticLayout(
+                assignment.value, assignmentPaint, pageWidth - 100,
+                Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false)
+            staticLayout.draw(canvas)
+            canvas.translate(0f, (staticLayout.height + 30).toFloat())
+            height += staticLayout.height + 30
+        }
+
+        if (getHeaderVisibility() == View.VISIBLE) {
+            var staticLayout = StaticLayout(
+                headerColumn1.value, assignmentPaint, (pageWidth-150)/3,
+                Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false)
+            staticLayout.draw(canvas)
+
+            canvas.translate((pageWidth-150)/3 + 25F, 0F)
+            staticLayout = StaticLayout(
+                headerColumn2.value, assignmentPaint, (pageWidth-150)/3,
+                Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false)
+            staticLayout.draw(canvas)
+
+            canvas.translate((pageWidth-150)/3 + 25F, 0F)
+            staticLayout = StaticLayout(
+                headerColumn3.value, assignmentPaint, (pageWidth-150)/3,
+                Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false)
+            staticLayout.draw(canvas)
+
+            canvas.translate(-(((pageWidth-150)/3 + 25F)*2), (staticLayout.height + 30).toFloat())
+            height += staticLayout.height + 30
+        }
+
+        for (row in randomizedRows.value!!) {
+            var column1 = ""
+            var column2 = ""
+            val column3 = StringBuilder()
+            val iterator = row.cellIterator()
+            while (iterator.hasNext()) {
+                val cell = iterator.next()
+                when (cell.columnIndex) {
+                    1 -> column1 = cell.stringCellValue
+                    2 -> column2 = cell.stringCellValue
+                    in 3..12 -> {
+                        if (cell.stringCellValue != "") {
+                            if (column3.toString() != "")
+                                column3.append("\n")
+                            column3.append(cell.stringCellValue)
+                        }
+                    }
+                }
+            }
+
+            val column1Layout = StaticLayout(
+                column1, textPaint, (pageWidth-150)/3,
+                Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false)
+            val column2Layout = StaticLayout(
+                column2, textPaint, (pageWidth-150)/3,
+                Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false)
+            val column3Layout = StaticLayout(
+                column3.toString(), textPaint, (pageWidth-150)/3,
+                Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false)
+
+            val layoutHeight = column1Layout.height.coerceAtLeast(
+                column2Layout.height.coerceAtLeast(column3Layout.height))
+
+            if (height + layoutHeight + 100 < pageHeight) {
+                column1Layout.draw(canvas)
+                canvas.translate((pageWidth-150)/3 + 25F, 0F)
+                column2Layout.draw(canvas)
+                canvas.translate((pageWidth-150)/3 + 25F, 0F)
+                column3Layout.draw(canvas)
+
+                canvas.translate(-(((pageWidth-150)/3 + 25F)*2), (layoutHeight + 20).toFloat())
+                height += layoutHeight + 20
+            } else {
+                pdfDocument.finishPage(myPage)
+                pageNumber += 1
+                myPage = pdfDocument.startPage(
+                    PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pageNumber).create()
+                )
+                canvas = myPage.canvas
+                canvas.drawBitmap(
+                    BitmapFactory.decodeResource(
+                        getApplication<Application>().resources,
+                        R.drawable.logo
+                    ), null,
+                    RectF(247F, 770F, 347F, 820F), null
+                )
+                canvas.translate(50f, 50f)
+                height = 50
+
+                column1Layout.draw(canvas)
+                canvas.translate((pageWidth-150)/3 + 25F, 0F)
+                column2Layout.draw(canvas)
+                canvas.translate((pageWidth-150)/3 + 25F, 0F)
+                column3Layout.draw(canvas)
+
+                canvas.translate(-(((pageWidth-150)/3 + 25F)*2), (layoutHeight + 20).toFloat())
+                height += layoutHeight + 20
+            }
+        }
+        pdfDocument.finishPage(myPage)
+
+        val displayName = "LinePicker-" + System.currentTimeMillis() + ".pdf"
+        val contentValues = ContentValues()
+        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
+        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            contentValues.put(
+                MediaStore.MediaColumns.RELATIVE_PATH,
+                Environment.DIRECTORY_DOCUMENTS)
+        else contentValues.put(
+            MediaStore.MediaColumns.DATA,
+            Environment.getExternalStorageDirectory().toString() + "/" + displayName)
+
+        val resolver: ContentResolver = getApplication<Application>().contentResolver
+        val uri: Uri?
+        try {
+            uri = resolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
+            val pfd: ParcelFileDescriptor? = uri?.let { resolver.openFileDescriptor(it, "w") }
+            pdfDocument.writeTo(FileOutputStream(pfd?.fileDescriptor))
+            pfd?.close()
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.setDataAndType(uri, "application/pdf")
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            val pendingIntent = PendingIntent.getActivity(getApplication(), 0, intent, 0)
+            val builder: NotificationCompat.Builder = NotificationCompat.Builder(getApplication(), "1")
+                .setSmallIcon(R.drawable.logo)
+                .setContentTitle("PDF file generated successfully")
+                .setContentText("Tap to open")
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setPriority(Notification.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+            val notificationManager = NotificationManagerCompat.from(getApplication())
+            notificationManager.notify(1, builder.build())
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        pdfDocument.close()
     }
 }

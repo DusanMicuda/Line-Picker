@@ -19,7 +19,6 @@ class ListViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val stringBuilder = StringBuilder()
         val iterator = row.cellIterator()
         while (iterator.hasNext()) {
-
             val cell = iterator.next()
             when (cell.columnIndex) {
                 1 -> columnWord.text = cell.stringCellValue
