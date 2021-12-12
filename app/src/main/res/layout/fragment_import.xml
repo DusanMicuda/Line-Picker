@@ -29,7 +29,6 @@
         <Button
             android:id="@+id/importButton"
             android:text="@string/import_file_button"
-            android:onClick="@{() -> viewModel.importFile()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

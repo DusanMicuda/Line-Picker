@@ -34,13 +34,12 @@ class RandomizeFragment : Fragment() {
         viewModel.rows.observe(viewLifecycleOwner, { binding.randomizeList.adapter = ListAdapter(it) })
 
         binding.randomize.setOnClickListener {
-            if (!binding.count.text.isNullOrBlank() && binding.count.text.isDigitsOnly())
-                if (viewModel.randomize(binding.count.text.toString().toInt()))
-                    view?.let { Navigation.findNavController(it).navigate(R.id.action_randomizeFragment_to_exportFragment) }
+                if (!binding.count.text.isNullOrBlank() &&
+                    binding.count.text.isDigitsOnly() &&
+                    viewModel.randomize(binding.count.text.toString().toInt()))
+                        view?.let { Navigation.findNavController(it).navigate(R.id.action_randomizeFragment_to_exportFragment) }
                 else
                     Toast.makeText(requireContext(), "Count isn`t in range!", Toast.LENGTH_SHORT).show()
-            else
-                Toast.makeText(requireContext(), "Count isn`t in range!", Toast.LENGTH_SHORT).show()
         }
 
         return binding.root

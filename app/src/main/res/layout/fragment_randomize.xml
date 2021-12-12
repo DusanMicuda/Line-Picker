@@ -145,6 +145,7 @@
                     android:inputType="number"
                     android:textStyle="italic"
                     android:hint="@{viewModel.hint}"
+                    android:autofillHints="none"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/randomize"
                     app:layout_constraintStart_toStartOf="parent"

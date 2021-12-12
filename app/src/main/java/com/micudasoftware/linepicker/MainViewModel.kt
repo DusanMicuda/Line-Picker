@@ -23,6 +23,7 @@ import android.view.View
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.Row
@@ -39,14 +40,34 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val xls = "application/vnd.ms-excel"
     private val xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-    val assignment = MutableLiveData<String>()
-    val headerColumn1 = MutableLiveData<String>()
-    val headerColumn2 = MutableLiveData<String>()
-    val headerColumn3 = MutableLiveData<String>()
-    val hint = MutableLiveData<String>()
-    val rows = MutableLiveData<ArrayList<Row>>()
-    val randomizedRows = MutableLiveData<ArrayList<Row>>()
-    val count = MutableLiveData<Int>()
+
+    private val _assignment = MutableLiveData<String>()
+    val assignment: LiveData<String>
+        get() = _assignment
+
+    private val _headerColumn1 = MutableLiveData<String>()
+    val headerColumn1: LiveData<String>
+        get() = _headerColumn1
+
+    private val _headerColumn2 = MutableLiveData<String>()
+    val headerColumn2: LiveData<String>
+        get() = _headerColumn2
+
+    private val _headerColumn3 = MutableLiveData<String>()
+    val headerColumn3: LiveData<String>
+        get() = _headerColumn3
+
+    private val _hint = MutableLiveData<String>()
+    val hint: LiveData<String>
+        get() = _hint
+
+    private val _rows = MutableLiveData<ArrayList<Row>>()
+    val rows: LiveData<ArrayList<Row>>
+        get() = _rows
+
+    private val _randomizedRows = MutableLiveData<ArrayList<Row>>()
+    val randomizedRows: LiveData<ArrayList<Row>>
+        get() = _randomizedRows
 
     init {
         intent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -54,20 +75,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         intent.putExtra(Intent.EXTRA_MIME_TYPES,  arrayOf(xlsx, xls))
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
 
-        rows.value = ArrayList()
-
-        count.value = 0
+        _rows.value = ArrayList()
     }
 
-    fun getAssignmentVisibility() = if (assignment.value.isNullOrBlank()) View.GONE else View.VISIBLE
+    fun getAssignmentVisibility() = if (_assignment.value.isNullOrBlank()) View.GONE else View.VISIBLE
 
-    fun getHeaderVisibility() = if (headerColumn1.value.isNullOrBlank() &&
-                                    headerColumn2.value.isNullOrBlank() &&
-                                    headerColumn3.value.isNullOrBlank())
+    fun getHeaderVisibility() = if (_headerColumn1.value.isNullOrBlank() &&
+                                    _headerColumn2.value.isNullOrBlank() &&
+                                    _headerColumn3.value.isNullOrBlank())
                                         View.GONE else View.VISIBLE
 
     fun readExcelData(excelFile: Uri) {
-        rows.value = ArrayList()
+        _rows.value = ArrayList()
         val inputStream = getApplication<Application>().contentResolver?.openInputStream(excelFile)
 
         val workbook: Workbook =
@@ -77,37 +96,37 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 else -> return
             }
 
-        assignment.value = null
-        headerColumn1.value = null
-        headerColumn2.value = null
-        headerColumn3.value = null
+        _assignment.value = null
+        _headerColumn1.value = null
+        _headerColumn2.value = null
+        _headerColumn3.value = null
         val sheet = workbook.getSheetAt(0)
         for (row: Row in sheet) {
             when (row.rowNum) {
                 0 -> if (row.cellIterator().hasNext())
-                    assignment.value = row.cellIterator().next().stringCellValue
+                    _assignment.value = row.cellIterator().next().stringCellValue
                 1 -> {
                     val cellIterator = row.cellIterator()
                     if (cellIterator != null) {
                         while (cellIterator.hasNext()) {
                             val cell = cellIterator.next()
                             when (cell.columnIndex) {
-                                1 -> headerColumn1.value = cell.stringCellValue
-                                2 -> headerColumn2.value = cell.stringCellValue
-                                3 -> headerColumn3.value = cell.stringCellValue
+                                1 -> _headerColumn1.value = cell.stringCellValue
+                                2 -> _headerColumn2.value = cell.stringCellValue
+                                3 -> _headerColumn3.value = cell.stringCellValue
                             }
                         }
                     }
                 }
-                else -> rows.value?.add(row)
+                else -> _rows.value?.add(row)
             }
         }
-        hint.value = getApplication<Application>().getString(R.string.hint, rows.value?.size)
+        _hint.value = getApplication<Application>().getString(R.string.hint, _rows.value?.size)
     }
 
     fun randomize(count: Int): Boolean{
-        val cells = ArrayList(rows.value)
-        randomizedRows.value = ArrayList()
+        val cells = ArrayList(_rows.value)
+        _randomizedRows.value = ArrayList()
 
         if (count < 1 || count > cells.size)
             return false
@@ -116,7 +135,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         {
             val rand = Random()
             val index = rand.nextInt(cells.size)
-            randomizedRows.value?.add(cells[index])
+            _randomizedRows.value?.add(cells[index])
             cells.removeAt(index)
         }
         return true
@@ -152,7 +171,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         if (getAssignmentVisibility() == View.VISIBLE) {
             val staticLayout = StaticLayout(
-                assignment.value, assignmentPaint, pageWidth - 100,
+                _assignment.value, assignmentPaint, pageWidth - 100,
                 Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false)
             staticLayout.draw(canvas)
             canvas.translate(0f, (staticLayout.height + 30).toFloat())
@@ -161,19 +180,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         if (getHeaderVisibility() == View.VISIBLE) {
             var staticLayout = StaticLayout(
-                headerColumn1.value, assignmentPaint, (pageWidth-150)/3,
+                _headerColumn1.value, assignmentPaint, (pageWidth-150)/3,
                 Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false)
             staticLayout.draw(canvas)
 
             canvas.translate((pageWidth-150)/3 + 25F, 0F)
             staticLayout = StaticLayout(
-                headerColumn2.value, assignmentPaint, (pageWidth-150)/3,
+                _headerColumn2.value, assignmentPaint, (pageWidth-150)/3,
                 Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false)
             staticLayout.draw(canvas)
 
             canvas.translate((pageWidth-150)/3 + 25F, 0F)
             staticLayout = StaticLayout(
-                headerColumn3.value, assignmentPaint, (pageWidth-150)/3,
+                _headerColumn3.value, assignmentPaint, (pageWidth-150)/3,
                 Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false)
             staticLayout.draw(canvas)
 
@@ -181,7 +200,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             height += staticLayout.height + 30
         }
 
-        for (row in randomizedRows.value!!) {
+        for (row in _randomizedRows.value!!) {
             var column1 = ""
             var column2 = ""
             val column3 = StringBuilder()
