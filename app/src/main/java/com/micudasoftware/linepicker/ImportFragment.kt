@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,12 +14,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.micudasoftware.linepicker.databinding.FragmentImportBinding
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.Row
@@ -33,6 +36,9 @@ class ImportFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        (activity as AppCompatActivity).supportActionBar?.show()
+        activity?.window?.statusBarColor = Color.parseColor("#3da0d7")
+
         val binding: FragmentImportBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_import, container, false)
 
@@ -55,7 +61,7 @@ class ImportFragment : Fragment() {
         if (result.resultCode == Activity.RESULT_OK) {
             result.data?.data?.let { data ->
                 viewModel.readExcelData(data)
-                view?.let { Navigation.findNavController(it).navigate(R.id.action_importFragment_to_randomizeFragment) }
+                view?.findNavController()?.navigate(R.id.action_importFragment_to_randomizeFragment)
             }
         }
     }

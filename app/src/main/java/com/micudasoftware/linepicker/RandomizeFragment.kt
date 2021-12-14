@@ -14,6 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.micudasoftware.linepicker.databinding.FragmentRandomizeBinding
 
@@ -37,7 +38,7 @@ class RandomizeFragment : Fragment() {
                 if (!binding.count.text.isNullOrBlank() &&
                     binding.count.text.isDigitsOnly() &&
                     viewModel.randomize(binding.count.text.toString().toInt()))
-                        view?.let { Navigation.findNavController(it).navigate(R.id.action_randomizeFragment_to_exportFragment) }
+                        view?.findNavController()?.navigate(R.id.action_randomizeFragment_to_exportFragment)
                 else
                     Toast.makeText(requireContext(), "Count isn`t in range!", Toast.LENGTH_SHORT).show()
         }

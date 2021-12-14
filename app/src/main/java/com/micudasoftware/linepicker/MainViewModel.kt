@@ -125,7 +125,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun randomize(count: Int): Boolean{
-        val cells = ArrayList(_rows.value)
+        val cells = ArrayList(_rows.value as MutableCollection<out Row>)
         _randomizedRows.value = ArrayList()
 
         if (count < 1 || count > cells.size)
