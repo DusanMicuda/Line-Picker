@@ -3,10 +3,8 @@ package com.micudasoftware.linepicker
 import android.graphics.Color
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -14,6 +12,8 @@ import androidx.navigation.findNavController
 import com.micudasoftware.linepicker.databinding.FragmentPdfBinding
 
 class PDFFragment : Fragment() {
+
+    private lateinit var viewModel: PDFViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,16 +25,17 @@ class PDFFragment : Fragment() {
         val binding: FragmentPdfBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_pdf, container, false)
 
-        val viewModel = ViewModelProvider(this)[PDFViewModel::class.java]
+        viewModel = ViewModelProvider(this)[PDFViewModel::class.java]
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        viewModel.isFirstStart = PDFFragmentArgs.fromBundle(requireArguments()).isFirstStart
+        viewModel.file.value = PDFFragmentArgs.fromBundle(requireArguments()).file
         viewModel.buttonVisible.value =
-            if (PDFFragmentArgs.fromBundle(requireArguments()).isFirstStart)
+            if (viewModel.isFirstStart)
                 View.VISIBLE
             else
                 View.INVISIBLE
-        viewModel.file.value = PDFFragmentArgs.fromBundle(requireArguments()).file
 
         viewModel.file.observe(viewLifecycleOwner, Observer { binding.PDFView.fromAsset(it).load() })
         viewModel.canContinue.observe(viewLifecycleOwner, Observer {
@@ -43,5 +44,17 @@ class PDFFragment : Fragment() {
         })
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (viewModel.isFirstStart)
+            setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu, menu)
+        menu.clear()
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }

@@ -8,4 +8,8 @@
     <string name="powered_by">Powered by</string>
     <string name="accept_button">Accept</string>
     <string name="continue_button">Continue</string>
+    <string name="menu_user_manual">User Manual</string>
+    <string name="menu_license_agreement">License Agreement</string>
+    <string name="menu_software_version">Software Version</string>
+    <string name="menu_about_us">About Us</string>
 </resources>

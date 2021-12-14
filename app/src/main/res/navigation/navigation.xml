@@ -60,4 +60,12 @@
             app:argType="boolean"
             android:defaultValue="false" />
     </fragment>
+    <action android:id="@+id/action_global_PDFFragment" app:destination="@id/PDFFragment">
+        <argument
+            android:name="file"
+            app:argType="string" />
+        <argument
+            android:name="isFirstStart"
+            android:defaultValue="false" />
+    </action>
 </navigation>
