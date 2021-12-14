@@ -210,7 +210,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 when (cell.columnIndex) {
                     1 -> column1 = cell.stringCellValue
                     2 -> column2 = cell.stringCellValue
-                    in 3..12 -> {
+                    in 3..10 -> {
                         if (cell.stringCellValue != "") {
                             if (column3.toString() != "")
                                 column3.append("\n")

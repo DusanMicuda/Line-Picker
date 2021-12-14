@@ -23,7 +23,7 @@ class ListViewHolder(view: View): RecyclerView.ViewHolder(view) {
             when (cell.columnIndex) {
                 1 -> columnWord.text = cell.stringCellValue
                 2 -> columnPronunciation.text = cell.stringCellValue
-                in 3..12 -> {
+                in 3..10 -> {
                     if (cell.stringCellValue != "") {
                         if (stringBuilder.toString() != "")
                             stringBuilder.append("\n")
