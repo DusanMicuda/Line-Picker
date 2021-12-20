@@ -296,7 +296,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             val pendingIntent = PendingIntent.getActivity(getApplication(), 0, intent, 0)
             val builder: NotificationCompat.Builder = NotificationCompat.Builder(getApplication(), "1")
-                .setSmallIcon(R.drawable.logo)
+                .setSmallIcon(R.drawable.statusbaricon)
                 .setContentTitle("PDF file generated successfully")
                 .setContentText("Tap to open")
                 .setDefaults(Notification.DEFAULT_ALL)
