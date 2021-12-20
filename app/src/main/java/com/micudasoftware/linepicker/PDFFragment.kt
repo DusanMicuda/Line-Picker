@@ -20,7 +20,7 @@ class PDFFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         (activity as AppCompatActivity).supportActionBar?.show()
-        activity?.window?.statusBarColor = Color.parseColor("#3da0d7")
+        activity?.window?.statusBarColor = resources.getColor(R.color.colorPrimaryVariant)
 
         val binding: FragmentPdfBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_pdf, container, false)

@@ -37,7 +37,7 @@ class ImportFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         (activity as AppCompatActivity).supportActionBar?.show()
-        activity?.window?.statusBarColor = Color.parseColor("#3da0d7")
+        activity?.window?.statusBarColor = resources.getColor(R.color.colorPrimaryVariant)
 
         val binding: FragmentImportBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_import, container, false)
