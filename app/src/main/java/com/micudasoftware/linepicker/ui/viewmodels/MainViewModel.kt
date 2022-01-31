@@ -1,4 +1,4 @@
-package com.micudasoftware.linepicker
+package com.micudasoftware.linepicker.ui.viewmodels
 
 import android.app.Application
 import android.app.Notification
@@ -25,6 +25,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.micudasoftware.linepicker.R
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook

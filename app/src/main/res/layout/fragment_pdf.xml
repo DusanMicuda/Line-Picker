@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.micudasoftware.linepicker.PDFViewModel" />
+            type="com.micudasoftware.linepicker.ui.viewmodels.PDFViewModel" />
 
     </data>
 

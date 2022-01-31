@@ -1,9 +1,9 @@
-package com.micudasoftware.linepicker
+package com.micudasoftware.linepicker.ui.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.micudasoftware.linepicker.R
 import org.apache.poi.ss.usermodel.Row
 
 class ListAdapter(private val rows: ArrayList<Row>): RecyclerView.Adapter<ListViewHolder>() {

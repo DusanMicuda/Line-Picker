@@ -6,16 +6,16 @@
     <data>
         <variable
             name="viewModel"
-            type="com.micudasoftware.linepicker.MainViewModel" />
+            type="com.micudasoftware.linepicker.ui.viewmodels.MainViewModel" />
         <variable
             name="exportFragment"
-            type="com.micudasoftware.linepicker.ExportFragment" />
+            type="com.micudasoftware.linepicker.ui.fragments.ExportFragment" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".RandomizeFragment">
+        tools:context=".ui.fragments.RandomizeFragment">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBarLayout"

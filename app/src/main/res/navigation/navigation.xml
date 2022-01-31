@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/importFragment"
-        android:name="com.micudasoftware.linepicker.ImportFragment"
+        android:name="com.micudasoftware.linepicker.ui.fragments.ImportFragment"
         android:label="fragment_import"
         tools:layout="@layout/fragment_import">
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/randomizeFragment"
-        android:name="com.micudasoftware.linepicker.RandomizeFragment"
+        android:name="com.micudasoftware.linepicker.ui.fragments.RandomizeFragment"
         android:label="fragment_randomize"
         tools:layout="@layout/fragment_randomize">
         <action
@@ -25,12 +25,12 @@
     </fragment>
     <fragment
         android:id="@+id/exportFragment"
-        android:name="com.micudasoftware.linepicker.ExportFragment"
+        android:name="com.micudasoftware.linepicker.ui.fragments.ExportFragment"
         android:label="fragment_export"
         tools:layout="@layout/fragment_export" />
     <fragment
         android:id="@+id/splashScreenFragment"
-        android:name="com.micudasoftware.linepicker.SplashScreenFragment"
+        android:name="com.micudasoftware.linepicker.ui.fragments.SplashScreenFragment"
         android:label="SplashScreenFragment">
         <action
             android:id="@+id/action_splashScreenFragment_to_importFragment"
@@ -45,7 +45,7 @@
     </fragment>
     <fragment
         android:id="@+id/PDFFragment"
-        android:name="com.micudasoftware.linepicker.PDFFragment"
+        android:name="com.micudasoftware.linepicker.ui.fragments.PDFFragment"
         android:label="PDFFragment" >
         <action
             android:id="@+id/action_PDFFragment_to_importFragment"

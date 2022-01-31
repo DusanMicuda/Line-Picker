@@ -1,14 +1,14 @@
-package com.micudasoftware.linepicker
+package com.micudasoftware.linepicker.ui.fragments
 
-import android.graphics.Color
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
+import com.micudasoftware.linepicker.ui.viewmodels.PDFViewModel
+import com.micudasoftware.linepicker.R
 import com.micudasoftware.linepicker.databinding.FragmentPdfBinding
 
 class PDFFragment : Fragment() {
@@ -37,11 +37,11 @@ class PDFFragment : Fragment() {
             else
                 View.INVISIBLE
 
-        viewModel.file.observe(viewLifecycleOwner, Observer { binding.PDFView.fromAsset(it).load() })
-        viewModel.canContinue.observe(viewLifecycleOwner, Observer {
+        viewModel.file.observe(viewLifecycleOwner) { binding.PDFView.fromAsset(it).load() }
+        viewModel.canContinue.observe(viewLifecycleOwner) {
             if (it)
                 view?.findNavController()?.navigate(R.id.action_PDFFragment_to_importFragment)
-        })
+        }
 
         return binding.root
     }

@@ -1,21 +1,19 @@
-package com.micudasoftware.linepicker
+package com.micudasoftware.linepicker.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
-import androidx.cardview.widget.CardView
 import androidx.core.text.isDigitsOnly
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.micudasoftware.linepicker.ui.adapters.ListAdapter
+import com.micudasoftware.linepicker.ui.viewmodels.MainViewModel
+import com.micudasoftware.linepicker.R
 import com.micudasoftware.linepicker.databinding.FragmentRandomizeBinding
 
 class RandomizeFragment : Fragment() {
@@ -26,13 +24,15 @@ class RandomizeFragment : Fragment() {
     ): View {
         val binding: FragmentRandomizeBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_randomize, container, false)
-        val viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        val viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.randomizeList.layoutManager = LinearLayoutManager(activity)
 
-        viewModel.rows.observe(viewLifecycleOwner, { binding.randomizeList.adapter = ListAdapter(it) })
+        viewModel.rows.observe(viewLifecycleOwner) {
+            binding.randomizeList.adapter = ListAdapter(it)
+        }
 
         binding.randomize.setOnClickListener {
                 if (!binding.count.text.isNullOrBlank() &&

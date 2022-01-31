@@ -1,4 +1,4 @@
-package com.micudasoftware.linepicker
+package com.micudasoftware.linepicker.ui.viewmodels
 
 import android.app.Application
 import android.content.Context

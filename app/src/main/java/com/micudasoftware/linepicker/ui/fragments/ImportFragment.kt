@@ -1,13 +1,9 @@
-package com.micudasoftware.linepicker
+package com.micudasoftware.linepicker.ui.fragments
 
 import android.Manifest
 import android.app.Activity
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,16 +13,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import com.micudasoftware.linepicker.ui.viewmodels.MainViewModel
+import com.micudasoftware.linepicker.R
 import com.micudasoftware.linepicker.databinding.FragmentImportBinding
-import org.apache.poi.hssf.usermodel.HSSFWorkbook
-import org.apache.poi.ss.usermodel.Row
-import org.apache.poi.ss.usermodel.Workbook
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 class ImportFragment : Fragment() {
 
@@ -42,11 +33,11 @@ class ImportFragment : Fragment() {
         val binding: FragmentImportBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_import, container, false)
 
-        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        binding.importButton.setOnClickListener() {
+        binding.importButton.setOnClickListener {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) ==
                 PackageManager.PERMISSION_GRANTED) {
                     resultLauncher.launch(viewModel.intent)

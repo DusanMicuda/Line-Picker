@@ -1,10 +1,9 @@
-package com.micudasoftware.linepicker
+package com.micudasoftware.linepicker.ui.adapters
 
-import android.content.res.Resources
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.micudasoftware.linepicker.R
 import org.apache.poi.ss.usermodel.Row
 import java.lang.StringBuilder
 

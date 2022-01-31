@@ -1,12 +1,12 @@
-package com.micudasoftware.linepicker
+package com.micudasoftware.linepicker.ui.viewmodels
 
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.micudasoftware.linepicker.R
 
 class PDFViewModel(application: Application) : AndroidViewModel(application) {
 

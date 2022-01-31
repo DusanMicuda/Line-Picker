@@ -1,4 +1,4 @@
-package com.micudasoftware.linepicker
+package com.micudasoftware.linepicker.ui
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -10,9 +10,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
-import androidx.navigation.ui.NavigationUI
+import com.micudasoftware.linepicker.NavigationDirections
+import com.micudasoftware.linepicker.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
