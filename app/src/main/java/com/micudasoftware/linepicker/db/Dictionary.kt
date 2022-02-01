@@ -6,7 +6,11 @@ import com.micudasoftware.linepicker.other.Constants.DICTIONARY_TABLE_NAME
 
 @Entity(tableName = DICTIONARY_TABLE_NAME)
 data class Dictionary(
-    val dictionary: List<List<String>>,
     val name: String,
+    val assignment: String? = null,
+    val headerColumn1: String? = null,
+    val headerColumn2: String? = null,
+    val headerColumn3: String? = null,
+    val dictionary: List<List<String>>,
     @PrimaryKey val id: Int? = null
 )
