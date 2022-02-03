@@ -12,15 +12,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.micudasoftware.linepicker.R
+import com.micudasoftware.linepicker.composeui.viewmodels.AppBarViewModel
 import com.micudasoftware.linepicker.composeui.viewmodels.DictionaryListViewModel
 import com.micudasoftware.linepicker.db.Dictionary
 import com.micudasoftware.linepicker.other.Constants
@@ -71,72 +68,17 @@ fun DictionaryListScreen(
         }
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            AppBar()
-            DictionaryList(navigator = navigator, dictionaryList = dictionaryList)
+            AppBar(
+                navigator = navigator,
+                onRemoveButtonClick = { viewModel.onEvent(Event.OnRemoveDictionaries) }
+            )
+            ListOfDictionaries(navigator = navigator, dictionaryList = dictionaryList)
         }
     }
 }
 
 @Composable
-fun AppBar(
-    modifier: Modifier = Modifier,
-    viewModel: DictionaryListViewModel = hiltViewModel()
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Top
-    ) {
-        Text(text = stringResource(id = R.string.app_name))
-        if (viewModel.removeLayoutIsVisible)
-            RemoveButton()
-        else
-            MenuButton()
-    }
-}
-
-@Composable
-fun MenuButton() {
-    var expanded by remember { mutableStateOf(false)}
-    IconButton(
-        onClick = { expanded = true }
-    ) {
-        Icon(imageVector = Icons.Default.Menu, contentDescription = "menu")
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            DropdownMenuItem(onClick = { /*TODO navigate to pdf*/ }) {
-                Text(text = stringResource(id = R.string.menu_user_manual))
-            }
-            DropdownMenuItem(onClick = { /*TODO navigate to pdf*/ }) {
-                Text(text = stringResource(id = R.string.menu_license_agreement))
-            }
-            DropdownMenuItem(onClick = { /*TODO navigate to pdf*/ }) {
-                Text(text = stringResource(id = R.string.menu_software_version))
-            }
-            DropdownMenuItem(onClick = { /*TODO navigate to pdf*/ }) {
-                Text(text = stringResource(id = R.string.menu_about_us))
-            }
-        }
-    }
-}
-
-@Composable
-fun RemoveButton(
-    viewModel: DictionaryListViewModel = hiltViewModel()
-) {
-    IconButton(
-        onClick = { viewModel.onEvent(Event.OnRemoveDictionaries) }
-    ) {
-        Icon(imageVector = Icons.Default.Delete, contentDescription = "delete")
-    }
-}
-
-@Composable
-fun DictionaryList(
+fun ListOfDictionaries(
     modifier: Modifier = Modifier,
     navigator: DestinationsNavigator,
     dictionaryList: List<Dictionary>
@@ -145,7 +87,7 @@ fun DictionaryList(
         modifier = modifier.fillMaxSize(),
         content = {
             items(dictionaryList) { dictionary ->
-                DictionaryListItem(
+                ListOfDictionariesItem(
                     dictionary = dictionary,
                     navigator = navigator
                 )
@@ -156,13 +98,14 @@ fun DictionaryList(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DictionaryListItem(
+fun ListOfDictionariesItem(
     modifier: Modifier = Modifier,
     dictionary: Dictionary,
     navigator: DestinationsNavigator,
-    viewModel: DictionaryListViewModel = hiltViewModel()
+    viewModel: DictionaryListViewModel = hiltViewModel(),
+    appBarViewModel: AppBarViewModel = hiltViewModel()
 ) {
-    val checkBoxState by remember { mutableStateOf(false)}
+    var checkBoxState by remember { mutableStateOf(false)}
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -172,7 +115,9 @@ fun DictionaryListItem(
                     //TODO onItemClick
                 },
                 onLongClick = {
-                    viewModel.removeLayoutIsVisible = true
+                    viewModel.checkBoxIsVisible = true
+                    appBarViewModel.removeButtonIsVisible = true
+                    checkBoxState = true
                 }
             ),
         shape = RoundedCornerShape(8.dp),
@@ -188,7 +133,7 @@ fun DictionaryListItem(
                 Text(text = dictionary.name)
                 dictionary.assignment?.let { Text(text = it) }
             }
-            if (viewModel.removeLayoutIsVisible) {
+            if (viewModel.checkBoxIsVisible) {
                 Checkbox(
                     checked = checkBoxState,
                     onCheckedChange = { isChecked ->

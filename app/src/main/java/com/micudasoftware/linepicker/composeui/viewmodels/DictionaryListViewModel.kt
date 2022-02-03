@@ -17,7 +17,7 @@ class DictionaryListViewModel @Inject constructor(
     private val repository: MainRepository
 ) : ViewModel() {
     val dictionaryList = repository.getAllDictionaries()
-    var removeLayoutIsVisible by mutableStateOf(false)
+    var checkBoxIsVisible by mutableStateOf(false)
     val checkedDictionaries = mutableListOf<Dictionary>()
 
     fun onEvent(event: Event) {
