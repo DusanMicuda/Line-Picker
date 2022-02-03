@@ -18,7 +18,7 @@ class MainRepositoryImpl @Inject constructor(
     override suspend fun deleteDictionary(dictionary: Dictionary) =
         dictionaryDAO.deleteDictionary(dictionary)
 
-    override fun getAllDictionaries(): Flow<Dictionary> =
+    override fun getAllDictionaries() =
         dictionaryDAO.getAllDictionaries()
 
     override suspend fun getDictionaryFromFile(uri: Uri): Dictionary =

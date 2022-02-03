@@ -14,5 +14,5 @@ interface DictionaryDAO {
     suspend fun deleteDictionary(dictionary: Dictionary)
 
     @Query("SELECT * FROM $DICTIONARY_TABLE_NAME ORDER BY id")
-    fun getAllDictionaries() : Flow<Dictionary>
+    fun getAllDictionaries() : Flow<List<Dictionary>>
 }

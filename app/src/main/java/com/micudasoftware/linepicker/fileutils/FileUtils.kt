@@ -1,5 +1,6 @@
 package com.micudasoftware.linepicker.fileutils
 
+import android.app.Activity
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.ContentResolver
@@ -20,6 +21,7 @@ import android.provider.OpenableColumns
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.micudasoftware.linepicker.R
@@ -35,6 +37,23 @@ import java.io.IOException
 
 
 class FileUtils(private val context: Context) {
+
+    fun chooseFile() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "*/*"
+            putExtra(Intent.EXTRA_MIME_TYPES,  arrayOf(FILE_TYPE_XLS, FILE_TYPE_XLSX))
+            addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+        }
+        val resultLauncher = context.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.data?.let { data ->
+                    viewModel.readExcelData(data)
+                    view?.findNavController()?.navigate(R.id.action_importFragment_to_randomizeFragment)
+                }
+            }
+        }
+    }
 
     fun getDictionary(excelFile: Uri) : Dictionary{
         val dictionary = arrayListOf(arrayListOf<String>())

@@ -10,7 +10,7 @@ interface MainRepository {
 
     suspend fun deleteDictionary(dictionary: Dictionary)
 
-    fun getAllDictionaries() : Flow<Dictionary>
+    fun getAllDictionaries() : Flow<List<Dictionary>>
 
     suspend fun getDictionaryFromFile(uri: Uri) : Dictionary
 
