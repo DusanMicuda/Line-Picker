@@ -12,4 +12,5 @@
     <string name="menu_license_agreement">License Agreement</string>
     <string name="menu_software_version">Software Version</string>
     <string name="menu_about_us">About Us</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>

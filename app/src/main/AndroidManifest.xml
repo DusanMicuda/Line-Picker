@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.micudasoftware.linepicker">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".BaseApplication"
@@ -14,8 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LinePicker">
         <activity
-            android:name=".ui.MainActivity"
-            android:exported="true">
+            android:name=".composeui.MainActivity"
+            android:exported="true"
+            android:label="@string/title_activity_main"
+            android:theme="@style/Theme.LinePicker">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

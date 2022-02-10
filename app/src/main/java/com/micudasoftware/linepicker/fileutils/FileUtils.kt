@@ -38,25 +38,8 @@ import java.io.IOException
 
 class FileUtils(private val context: Context) {
 
-    fun chooseFile() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "*/*"
-            putExtra(Intent.EXTRA_MIME_TYPES,  arrayOf(FILE_TYPE_XLS, FILE_TYPE_XLSX))
-            addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-        }
-        val resultLauncher = context.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.data?.let { data ->
-                    viewModel.readExcelData(data)
-                    view?.findNavController()?.navigate(R.id.action_importFragment_to_randomizeFragment)
-                }
-            }
-        }
-    }
-
     fun getDictionary(excelFile: Uri) : Dictionary{
-        val dictionary = arrayListOf(arrayListOf<String>())
+        val dictionary = ArrayList<ArrayList<String>>()
         val inputStream = context.contentResolver?.openInputStream(excelFile)
 
         val workbook: Workbook =
@@ -72,6 +55,7 @@ class FileUtils(private val context: Context) {
         var headerColumn3: String? = null
         val sheet = workbook.getSheetAt(0)
         for ((i, row: Row) in sheet.withIndex()) {
+            val listRow = ArrayList<String>()
             when (row.rowNum) {
                 0 -> if (row.cellIterator().hasNext())
                     assignment = row.cellIterator().next().stringCellValue
@@ -94,8 +78,8 @@ class FileUtils(private val context: Context) {
                     while (iterator.hasNext()) {
                         val cell = iterator.next()
                         when (cell.columnIndex) {
-                            1 -> dictionary[i][0] = cell.stringCellValue
-                            2 -> dictionary[i][1] = cell.stringCellValue
+                            1 -> listRow.add(cell.stringCellValue)
+                            2 -> listRow.add(cell.stringCellValue)
                             in 3..9 -> {
                                 if (cell.stringCellValue != "") {
                                     if (stringBuilder.toString() != "")
@@ -106,9 +90,10 @@ class FileUtils(private val context: Context) {
 
                         }
                     }
-                    dictionary[i][2] = stringBuilder.toString()
+                    listRow.add(stringBuilder.toString())
                 }
             }
+            dictionary.add(listRow)
         }
         return Dictionary(
             name = getFileName(excelFile),

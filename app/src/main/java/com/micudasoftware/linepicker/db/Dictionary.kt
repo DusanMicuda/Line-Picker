@@ -11,6 +11,13 @@ data class Dictionary(
     val headerColumn1: String? = null,
     val headerColumn2: String? = null,
     val headerColumn3: String? = null,
-    val dictionary: List<List<String>>,
+    var dictionary: List<List<String>>,
     @PrimaryKey val id: Int? = null
-)
+) {
+    companion object {
+        fun empty() = Dictionary(
+            name = "",
+            dictionary = arrayListOf(emptyList())
+        )
+    }
+}

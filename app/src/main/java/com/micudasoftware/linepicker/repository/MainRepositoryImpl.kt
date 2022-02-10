@@ -18,8 +18,14 @@ class MainRepositoryImpl @Inject constructor(
     override suspend fun deleteDictionary(dictionary: Dictionary) =
         dictionaryDAO.deleteDictionary(dictionary)
 
+    override suspend fun deleteDictionaryById(id: Int) =
+        dictionaryDAO.deleteDictionaryById(id)
+
     override fun getAllDictionaries() =
         dictionaryDAO.getAllDictionaries()
+
+    override fun getDictionaryById(id: Int) =
+        dictionaryDAO.getDictionaryById(id)
 
     override suspend fun getDictionaryFromFile(uri: Uri): Dictionary =
         fileUtils.getDictionary(uri)

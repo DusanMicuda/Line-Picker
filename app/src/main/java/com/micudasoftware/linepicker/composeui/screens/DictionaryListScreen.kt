@@ -1,6 +1,7 @@
 package com.micudasoftware.linepicker.composeui.screens
 
 import android.content.Intent
+import android.os.Parcel
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -17,9 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.micudasoftware.linepicker.composeui.screens.destinations.DictionaryListScreenDestination
+import com.micudasoftware.linepicker.composeui.screens.destinations.DictionaryScreenDestination
 import com.micudasoftware.linepicker.composeui.viewmodels.AppBarViewModel
 import com.micudasoftware.linepicker.composeui.viewmodels.DictionaryListViewModel
 import com.micudasoftware.linepicker.db.Dictionary
+import com.micudasoftware.linepicker.db.DictionaryInfo
 import com.micudasoftware.linepicker.other.Constants
 import com.micudasoftware.linepicker.other.Event
 import com.ramcosta.composedestinations.annotation.Destination
@@ -28,8 +32,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination(start = true)
 @Composable
 fun DictionaryListScreen(
-    modifier: Modifier = Modifier,
     navigator: DestinationsNavigator,
+    modifier: Modifier = Modifier,
     viewModel: DictionaryListViewModel = hiltViewModel()
 ) {
     val dictionaryList by viewModel.dictionaryList.collectAsState(initial = emptyList())
@@ -81,7 +85,7 @@ fun DictionaryListScreen(
 fun ListOfDictionaries(
     modifier: Modifier = Modifier,
     navigator: DestinationsNavigator,
-    dictionaryList: List<Dictionary>
+    dictionaryList: List<DictionaryInfo>
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -100,7 +104,7 @@ fun ListOfDictionaries(
 @Composable
 fun ListOfDictionariesItem(
     modifier: Modifier = Modifier,
-    dictionary: Dictionary,
+    dictionary: DictionaryInfo,
     navigator: DestinationsNavigator,
     viewModel: DictionaryListViewModel = hiltViewModel(),
     appBarViewModel: AppBarViewModel = hiltViewModel()
@@ -112,7 +116,7 @@ fun ListOfDictionariesItem(
             .padding(8.dp)
             .combinedClickable(
                 onClick = {
-                    //TODO onItemClick
+                    navigator.navigate(DictionaryScreenDestination(dictionary.id))
                 },
                 onLongClick = {
                     viewModel.checkBoxIsVisible = true

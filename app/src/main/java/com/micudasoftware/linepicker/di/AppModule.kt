@@ -7,6 +7,7 @@ import com.micudasoftware.linepicker.db.DictionaryDAO
 import com.micudasoftware.linepicker.db.DictionaryDatabase
 import com.micudasoftware.linepicker.fileutils.FileUtils
 import com.micudasoftware.linepicker.other.Constants.DICTIONARY_DATABASE_NAME
+import com.micudasoftware.linepicker.repository.MainRepository
 import com.micudasoftware.linepicker.repository.MainRepositoryImpl
 import dagger.Module
 import dagger.Provides
@@ -42,5 +43,5 @@ object AppModule {
     fun provideMainRepository(
         dictionaryDAO: DictionaryDAO,
         fileUtils: FileUtils
-    ) = MainRepositoryImpl(dictionaryDAO, fileUtils)
+    ) : MainRepository = MainRepositoryImpl(dictionaryDAO, fileUtils)
 }

@@ -6,8 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.micudasoftware.linepicker.db.Dictionary
+import com.micudasoftware.linepicker.db.DictionaryInfo
 import com.micudasoftware.linepicker.other.Event
 import com.micudasoftware.linepicker.repository.MainRepository
+import com.micudasoftware.linepicker.repository.MainRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,7 +20,7 @@ class DictionaryListViewModel @Inject constructor(
 ) : ViewModel() {
     val dictionaryList = repository.getAllDictionaries()
     var checkBoxIsVisible by mutableStateOf(false)
-    val checkedDictionaries = mutableListOf<Dictionary>()
+    val checkedDictionaries = mutableListOf<DictionaryInfo>()
 
     fun onEvent(event: Event) {
         when(event) {
@@ -31,7 +33,7 @@ class DictionaryListViewModel @Inject constructor(
             is Event.OnRemoveDictionaries -> {
                 viewModelScope.launch {
                     checkedDictionaries.forEach { dictionary ->
-                        repository.deleteDictionary(dictionary)
+                        repository.deleteDictionaryById(dictionary.id)
                     }
                 }
             }
