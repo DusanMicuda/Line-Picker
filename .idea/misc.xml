@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/dusan/AndroidStudioProjects/LinePicker/app/src/main/res/drawable/curved_corners.xml" value="0.2703125" />
+        <entry key="..\:/Users/dusan/AndroidStudioProjects/LinePicker/app/src/main/res/drawable/ic_backgound.xml" value="0.1245" />
         <entry key="..\:/Users/dusan/AndroidStudioProjects/LinePicker/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/dusan/AndroidStudioProjects/LinePicker/app/src/main/res/layout/fragment_export.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/dusan/AndroidStudioProjects/LinePicker/app/src/main/res/layout/fragment_import.xml" value="0.25416666666666665" />

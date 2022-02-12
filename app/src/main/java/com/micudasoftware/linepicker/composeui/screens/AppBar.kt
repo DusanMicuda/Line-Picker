@@ -1,55 +1,69 @@
 package com.micudasoftware.linepicker.composeui.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.micudasoftware.linepicker.R
-import com.micudasoftware.linepicker.composeui.viewmodels.AppBarViewModel
+import com.micudasoftware.linepicker.composeui.theme.AppBarShape
 import com.micudasoftware.linepicker.composeui.viewmodels.DictionaryListViewModel
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
 fun AppBar(
     modifier: Modifier = Modifier,
-    navigator: DestinationsNavigator,
-    onRemoveButtonClick: () -> Unit = {},
-    viewModel: AppBarViewModel = hiltViewModel()
+    navigator: DestinationsNavigator
 ) {
-    Row(
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setSystemBarsColor(
+        color = MaterialTheme.colors.primaryVariant,
+        darkIcons = false
+    )
+
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Top
+            .background(MaterialTheme.colors.primary, AppBarShape()),
     ) {
-        Text(text = stringResource(id = R.string.app_name))
-        if (viewModel.removeButtonIsVisible)
-            RemoveButton(onRemoveButtonClick = onRemoveButtonClick)
-        else
-            MenuButton(navigator = navigator)
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp, bottom = 24.dp),
+            text = stringResource(id = R.string.app_name),
+            color = MaterialTheme.colors.onPrimary,
+            style = MaterialTheme.typography.h1
+        )
+        MenuButton(
+            modifier = Modifier.align(Alignment.TopEnd).padding(top = 20.dp, end = 8.dp),
+            navigator = navigator
+        )
     }
 }
 
 @Composable
 fun MenuButton(
+    modifier: Modifier = Modifier,
     navigator: DestinationsNavigator
 ) {
     var expanded by remember { mutableStateOf(false) }
     IconButton(
+        modifier = modifier,
         onClick = { expanded = true }
     ) {
-        Icon(imageVector = Icons.Default.Menu, contentDescription = "menu")
+        Icon(
+            imageVector = Icons.Default.MoreVert,
+            tint = MaterialTheme.colors.onPrimary,
+            contentDescription = "menu"
+        )
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
@@ -72,10 +86,12 @@ fun MenuButton(
 
 @Composable
 fun RemoveButton(
+    modifier: Modifier = Modifier,
     viewModel: DictionaryListViewModel = hiltViewModel(),
     onRemoveButtonClick: () -> Unit
 ) {
     IconButton(
+        modifier = modifier,
         onClick = onRemoveButtonClick
     ) {
         Icon(imageVector = Icons.Default.Delete, contentDescription = "delete")

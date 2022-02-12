@@ -124,6 +124,9 @@ dependencies {
     implementation 'androidx.compose.ui:ui-tooling:1.0.5'
     // Integration with ViewModels
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0'
+    //compose system bars
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.0-alpha"
+    implementation 'com.google.accompanist:accompanist-insets:0.24.0-alpha'
 
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'

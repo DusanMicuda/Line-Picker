@@ -1,31 +1,33 @@
 package com.micudasoftware.linepicker.composeui.screens
 
 import android.content.Intent
-import android.os.Parcel
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.micudasoftware.linepicker.composeui.screens.destinations.DictionaryListScreenDestination
+import com.micudasoftware.linepicker.R
 import com.micudasoftware.linepicker.composeui.screens.destinations.DictionaryScreenDestination
-import com.micudasoftware.linepicker.composeui.viewmodels.AppBarViewModel
 import com.micudasoftware.linepicker.composeui.viewmodels.DictionaryListViewModel
-import com.micudasoftware.linepicker.db.Dictionary
 import com.micudasoftware.linepicker.db.DictionaryInfo
 import com.micudasoftware.linepicker.other.Constants
-import com.micudasoftware.linepicker.other.Event
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -41,7 +43,7 @@ fun DictionaryListScreen(
         contract = ActivityResultContracts.StartActivityForResult(),
         onResult = { result ->
             val uri = result.data?.data
-            uri.let { viewModel.onEvent(Event.OnGetFile(it!!)) }
+            uri.let { viewModel.getFile(it!!) }
         }
     )
     val intent =  remember {
@@ -58,26 +60,59 @@ fun DictionaryListScreen(
         }
     }
 
+    val backPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+    val backPressedCallback = remember{
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                viewModel.showDeleteLayout(false)
+            }
+
+        }
+    }
+
+    LaunchedEffect(key1 = viewModel.deleteLayoutIsVisible) {
+        if (viewModel.deleteLayoutIsVisible)
+            backPressedDispatcher?.addCallback(backPressedCallback)
+        else
+            backPressedCallback.remove()
+    }
+    DisposableEffect(key1 = LocalLifecycleOwner.current) {
+        onDispose { backPressedCallback.remove() }
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { launcher.launch(intent) }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add"
-                )
+            if (!viewModel.deleteLayoutIsVisible) {
+                FloatingActionButton(
+                    onClick = { launcher.launch(intent) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add"
+                    )
+                }
+            } else {
+                FloatingActionButton(
+                    onClick = { viewModel.removeDictionaries() }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete"
+                    )
+                }
             }
         }
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            AppBar(
-                navigator = navigator,
-                onRemoveButtonClick = { viewModel.onEvent(Event.OnRemoveDictionaries) }
-            )
-            ListOfDictionaries(navigator = navigator, dictionaryList = dictionaryList)
-        }
+        Image(
+            modifier = Modifier.fillMaxHeight(0.85f),
+            painter = painterResource(id = R.drawable.ic_backgound),
+            alignment = Alignment.BottomCenter,
+            alpha = 0.5f,
+            contentDescription = "background"
+        )
+        ListOfDictionaries(navigator = navigator, dictionaryList = dictionaryList)
+        AppBar(navigator = navigator)
     }
 }
 
@@ -88,7 +123,10 @@ fun ListOfDictionaries(
     dictionaryList: List<DictionaryInfo>
 ) {
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(top = 44.dp),
+        contentPadding = PaddingValues(top = 46.dp, bottom = 74.dp),
         content = {
             items(dictionaryList) { dictionary ->
                 ListOfDictionariesItem(
@@ -107,24 +145,22 @@ fun ListOfDictionariesItem(
     dictionary: DictionaryInfo,
     navigator: DestinationsNavigator,
     viewModel: DictionaryListViewModel = hiltViewModel(),
-    appBarViewModel: AppBarViewModel = hiltViewModel()
 ) {
     var checkBoxState by remember { mutableStateOf(false)}
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(horizontal = 10.dp, vertical = 6.dp)
             .combinedClickable(
                 onClick = {
                     navigator.navigate(DictionaryScreenDestination(dictionary.id))
                 },
                 onLongClick = {
-                    viewModel.checkBoxIsVisible = true
-                    appBarViewModel.removeButtonIsVisible = true
+                    viewModel.showDeleteLayout(true)
                     checkBoxState = true
                 }
             ),
-        shape = RoundedCornerShape(8.dp),
+        shape = MaterialTheme.shapes.medium
     ) {
         Row(
             modifier = Modifier
@@ -134,19 +170,30 @@ fun ListOfDictionariesItem(
             verticalAlignment = Alignment.CenterVertically
         ){
             Column {
-                Text(text = dictionary.name)
-                dictionary.assignment?.let { Text(text = it) }
+                Text(
+                    text = dictionary.name,
+                    style = MaterialTheme.typography.h2
+                )
+                Text(
+                    text = dictionary.assignment,
+                    style = MaterialTheme.typography.subtitle1
+                )
             }
-            if (viewModel.checkBoxIsVisible) {
+            if (viewModel.deleteLayoutIsVisible) {
                 Checkbox(
                     checked = checkBoxState,
                     onCheckedChange = { isChecked ->
+                        checkBoxState = isChecked
                         if (isChecked)
                             viewModel.checkedDictionaries.add(dictionary)
                         else
                             viewModel.checkedDictionaries.remove(dictionary)
                     }
                 )
+            } else {
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = "edit")
+                }
             }
         }
     }
