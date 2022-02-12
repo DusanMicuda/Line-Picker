@@ -22,8 +22,21 @@ val Typography = Typography(
     h2 = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
+    ),
+
+    h3 = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
     ),
+
+    h6 = TextStyle(
+            fontFamily = FontFamily.SansSerif,
+            fontStyle = FontStyle.Italic,
+            fontSize = 16.sp,
+            color = Color.Red
+        ),
 
     subtitle1 = TextStyle(
         fontFamily = FontFamily.SansSerif,

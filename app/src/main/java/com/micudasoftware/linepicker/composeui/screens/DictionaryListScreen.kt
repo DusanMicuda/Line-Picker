@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.micudasoftware.linepicker.R
 import com.micudasoftware.linepicker.composeui.screens.destinations.DictionaryScreenDestination
@@ -39,11 +40,13 @@ fun DictionaryListScreen(
     viewModel: DictionaryListViewModel = hiltViewModel()
 ) {
     val dictionaryList by viewModel.dictionaryList.collectAsState(initial = emptyList())
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
         onResult = { result ->
             val uri = result.data?.data
-            uri.let { viewModel.getFile(it!!) }
+            if (uri != null)
+                viewModel.getDictionaryFromFile(uri)
         }
     )
     val intent =  remember {
@@ -104,15 +107,11 @@ fun DictionaryListScreen(
             }
         }
     ) {
-        Image(
-            modifier = Modifier.fillMaxHeight(0.85f),
-            painter = painterResource(id = R.drawable.ic_backgound),
-            alignment = Alignment.BottomCenter,
-            alpha = 0.5f,
-            contentDescription = "background"
-        )
+        Background(dictionaryListIsEmpty = dictionaryList.isEmpty())
         ListOfDictionaries(navigator = navigator, dictionaryList = dictionaryList)
         AppBar(navigator = navigator)
+        if (viewModel.editDialogIsVisible)
+            EditDialog()
     }
 }
 
@@ -158,6 +157,7 @@ fun ListOfDictionariesItem(
                 onLongClick = {
                     viewModel.showDeleteLayout(true)
                     checkBoxState = true
+                    viewModel.checkedDictionaries.add(dictionary)
                 }
             ),
         shape = MaterialTheme.shapes.medium
@@ -172,10 +172,10 @@ fun ListOfDictionariesItem(
             Column {
                 Text(
                     text = dictionary.name,
-                    style = MaterialTheme.typography.h2
+                    style = MaterialTheme.typography.h3
                 )
                 Text(
-                    text = dictionary.assignment,
+                    text = dictionary.description,
                     style = MaterialTheme.typography.subtitle1
                 )
             }
@@ -191,8 +191,130 @@ fun ListOfDictionariesItem(
                     }
                 )
             } else {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { viewModel.editDictionary(dictionary) }) {
                     Icon(imageVector = Icons.Default.Edit, contentDescription = "edit")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun Background(
+    modifier: Modifier = Modifier,
+    dictionaryListIsEmpty: Boolean
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Bottom
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.8f)
+                .padding(top = 22.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            var text by remember {mutableStateOf("Please import a file")}
+            text = if (dictionaryListIsEmpty) {
+                "Please import a file"
+            } else {
+                ""
+            }
+
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = text,
+                style = MaterialTheme.typography.subtitle1
+            )
+            Image(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                painter = painterResource(id = R.drawable.ic_backgound),
+                alpha = 0.5f,
+                contentDescription = "background"
+            )
+        }
+    }
+}
+
+@Composable
+fun EditDialog(
+    viewModel: DictionaryListViewModel = hiltViewModel()
+) {
+    var name by remember{ mutableStateOf("") }
+    var description by remember{ mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
+
+    name = viewModel.dictionary.name
+    if (viewModel.dictionary.assignment != null)
+        description = viewModel.dictionary.assignment!!
+
+    Dialog(
+        onDismissRequest = { viewModel.cancelEdit() }
+    ) {
+        Card(
+            shape = MaterialTheme.shapes.medium
+        ) {
+            Column(
+                verticalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(
+                    modifier = Modifier.padding(16.dp),
+                    text = "Import file",
+                    style = MaterialTheme.typography.h2
+                )
+                OutlinedTextField(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    value = name,
+                    label = { Text(text = "Name") },
+                    onValueChange = { name = it }
+                )
+                OutlinedTextField(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    value = description,
+                    label = { Text(text = "Description") },
+                    onValueChange = { description = it }
+                )
+                    Text(
+                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+                        text = errorMessage,
+                        style = MaterialTheme.typography.h6
+                    )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.End
+                    ) {
+                    OutlinedButton(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        shape = MaterialTheme.shapes.large,
+                        onClick = { viewModel.cancelEdit() }
+                    ) {
+                        Text(text = "Cancel")
+                    }
+                    Button(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        shape = MaterialTheme.shapes.large,
+                        onClick = {
+                            if (name.isNotEmpty() && description.isNotEmpty()) {
+                                viewModel.insertDictionary(name, description)
+                            } else {
+                                errorMessage = when{
+                                    description.isEmpty() ->
+                                        "Description can`t be empty!"
+                                    name.isEmpty() ->
+                                        "Name can`t be empty!"
+                                    else -> ""
+                                }
+                            }
+                        }
+                    ) {
+                        Text(text = "Save")
+                    }
                 }
             }
         }

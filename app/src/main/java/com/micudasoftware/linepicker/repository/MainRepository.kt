@@ -17,7 +17,7 @@ interface MainRepository {
 
     fun getDictionaryById(id: Int) : Flow<Dictionary>
 
-    suspend fun getDictionaryFromFile(uri: Uri) : Dictionary
+    fun getDictionaryFromFile(uri: Uri) : Dictionary
 
     suspend fun exportDictionaryToPDF(dictionary: Dictionary)
 }

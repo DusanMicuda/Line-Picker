@@ -27,7 +27,7 @@ class MainRepositoryImpl @Inject constructor(
     override fun getDictionaryById(id: Int) =
         dictionaryDAO.getDictionaryById(id)
 
-    override suspend fun getDictionaryFromFile(uri: Uri): Dictionary =
+    override fun getDictionaryFromFile(uri: Uri): Dictionary =
         fileUtils.getDictionary(uri)
 
     override suspend fun exportDictionaryToPDF(dictionary: Dictionary) =
