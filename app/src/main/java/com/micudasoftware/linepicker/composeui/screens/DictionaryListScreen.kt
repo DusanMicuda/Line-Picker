@@ -252,71 +252,69 @@ fun EditDialog(
     if (viewModel.dictionary.assignment != null)
         description = viewModel.dictionary.assignment!!
 
-    Dialog(
-        onDismissRequest = { viewModel.cancelEdit() }
-    ) {
-        Card(
-            shape = MaterialTheme.shapes.medium
-        ) {
+    AlertDialog(
+        title = {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = "Import file",
+                style = MaterialTheme.typography.h2
+            )
+        },
+        text = {
             Column(
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                Text(
-                    modifier = Modifier.padding(16.dp),
-                    text = "Import file",
-                    style = MaterialTheme.typography.h2
-                )
                 OutlinedTextField(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     value = name,
                     label = { Text(text = "Name") },
                     onValueChange = { name = it }
                 )
                 OutlinedTextField(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier = Modifier.padding(vertical = 4.dp),
                     value = description,
                     label = { Text(text = "Description") },
                     onValueChange = { description = it }
                 )
-                    Text(
-                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
-                        text = errorMessage,
-                        style = MaterialTheme.typography.h6
-                    )
-                Row(
+                Text(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.End
-                    ) {
-                    OutlinedButton(
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        shape = MaterialTheme.shapes.large,
-                        onClick = { viewModel.cancelEdit() }
-                    ) {
-                        Text(text = "Cancel")
-                    }
-                    Button(
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        shape = MaterialTheme.shapes.large,
-                        onClick = {
-                            if (name.isNotEmpty() && description.isNotEmpty()) {
-                                viewModel.insertDictionary(name, description)
-                            } else {
-                                errorMessage = when{
-                                    description.isEmpty() ->
-                                        "Description can`t be empty!"
-                                    name.isEmpty() ->
-                                        "Name can`t be empty!"
-                                    else -> ""
-                                }
-                            }
+                        .padding(horizontal = 8.dp)
+                        .offset(y = 8.dp),
+                    text = errorMessage,
+                    style = MaterialTheme.typography.h6
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                modifier = Modifier.offset((-8).dp, (-8).dp),
+                shape = MaterialTheme.shapes.large,
+                onClick = {
+                    if (name.isNotEmpty() && description.isNotEmpty()) {
+                        viewModel.insertDictionary(name, description)
+                    } else {
+                        errorMessage = when{
+                            description.isEmpty() ->
+                                "Description can`t be empty!"
+                            name.isEmpty() ->
+                                "Name can`t be empty!"
+                            else -> ""
                         }
-                    ) {
-                        Text(text = "Save")
                     }
                 }
+            ) {
+                Text(text = "Save")
             }
-        }
-    }
+        },
+        dismissButton = {
+            OutlinedButton(
+                modifier = Modifier.offset((-8).dp, (-8).dp),
+                shape = MaterialTheme.shapes.large,
+                onClick = { viewModel.cancelEdit() }
+            ) {
+                Text(text = "Cancel")
+            }
+        },
+        onDismissRequest = { viewModel.cancelEdit() }
+    )
 }
