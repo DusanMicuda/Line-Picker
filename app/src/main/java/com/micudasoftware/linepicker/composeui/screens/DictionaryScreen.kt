@@ -2,20 +2,25 @@ package com.micudasoftware.linepicker.composeui.screens
 
 import android.media.midi.MidiOutputPort
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.micudasoftware.linepicker.R
 import com.micudasoftware.linepicker.composeui.viewmodels.DictionaryViewModel
 import com.micudasoftware.linepicker.db.Dictionary
 import com.ramcosta.composedestinations.annotation.Destination
@@ -36,15 +41,26 @@ fun DictionaryScreen(
         dictionaryIsNotNull = true
     })
 
-    Column(modifier = modifier.fillMaxSize()) {
-        AppBar(navigator = navigator)
-        if (dictionaryIsNotNull) {
-            Assignment(dictionary = viewModel.dictionary.value)
-            Header(dictionary = viewModel.dictionary.value)
-            DictionaryList(dictionary = viewModel.dictionary.value)
+    if (viewModel.randomizeDialogState)
+        RandomizeDialog()
+
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        floatingActionButton = {
+            FloatingActionButton(onClick = { viewModel.showRandomizeDialog() }) {
+                Icon(painter = painterResource(id = R.drawable.outline_shuffle_24), contentDescription = "randomize")
+            }
+        }
+    ) {
+        Column(modifier = modifier.fillMaxSize()) {
+            AppBar(navigator = navigator)
+            if (dictionaryIsNotNull) {
+                Assignment(dictionary = viewModel.dictionary.value)
+                Header(dictionary = viewModel.dictionary.value)
+                DictionaryList(dictionary = viewModel.dictionary.value)
+            }
         }
     }
-    BottomBar(dictionaryIsNotNull = dictionaryIsNotNull)
 }
 
 @Composable
@@ -170,6 +186,74 @@ fun BottomBar(
                     Text(text = "Wrong Count!")
             }
 
+        }
+    }
+}
+
+@Composable
+fun RandomizeDialog(
+    viewModel: DictionaryViewModel = hiltViewModel()
+) {
+    var errorMessage by remember{ mutableStateOf("") }
+    var enteredCount by remember{ mutableStateOf("") }
+
+    Dialog(
+        onDismissRequest = { viewModel.cancelRandomize() }
+    ) {
+        Column(
+            modifier = Modifier
+                .background(
+                    MaterialTheme.colors.surface,
+                    MaterialTheme.shapes.medium
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                modifier = Modifier.padding(top = 16.dp),
+                text = "Randomize",
+                style = MaterialTheme.typography.h2
+            )
+            OutlinedTextField(
+                modifier = Modifier.padding(8.dp),
+                value = enteredCount,
+                label = { Text(text = "Count: 1 - ${viewModel.dictionary.value.dictionary.size}") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                onValueChange = { enteredCount = it }
+            )
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .align(Alignment.Start),
+                text = errorMessage,
+                style = MaterialTheme.typography.h6
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                OutlinedButton(
+                    modifier = Modifier.padding(4.dp),
+                    shape = MaterialTheme.shapes.large,
+                    onClick = { viewModel.cancelRandomize() }
+                ) {
+                    Text(text = "Cancel")
+                }
+                Button(
+                    modifier = Modifier.padding(4.dp),
+                    shape = MaterialTheme.shapes.large,
+                    onClick = {
+                        if (enteredCount.isNotEmpty() && enteredCount.isDigitsOnly()) {
+                            viewModel.randomize(enteredCount.toInt())
+                        } else {
+                            errorMessage = "Wrong Count!"
+                        }
+                    }
+                ) {
+                    Text(text = "Randomize")
+                }
+            }
         }
     }
 }

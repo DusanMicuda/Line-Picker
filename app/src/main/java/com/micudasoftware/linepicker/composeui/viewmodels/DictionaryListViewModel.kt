@@ -22,52 +22,52 @@ class DictionaryListViewModel @Inject constructor(
     val dictionaryList = repository.getAllDictionaries()
     var dictionary = Dictionary.empty()
         private set
-    var deleteLayoutIsVisible by mutableStateOf(false)
+    var deleteLayoutState by mutableStateOf(false)
         private set
     var checkedDictionaries = mutableListOf<DictionaryInfo>()
         private set
-    var editDialogIsVisible by mutableStateOf(false)
+    var editDialogState by mutableStateOf(false)
         private set
 
     fun showDeleteLayout(show: Boolean) {
         if (show)
-            deleteLayoutIsVisible = true
+            deleteLayoutState = true
         else {
-            deleteLayoutIsVisible = false
+            deleteLayoutState = false
             checkedDictionaries = mutableListOf()
         }
     }
 
     fun getDictionaryFromFile(uri: Uri) {
         dictionary = repository.getDictionaryFromFile(uri)
-        editDialogIsVisible = true
+        editDialogState = true
     }
 
     fun insertDictionary(name: String, description: String) = viewModelScope.launch {
         if (dictionary != Dictionary.empty()) {
             repository.insertDictionary(dictionary.copy(name = name, description = description))
             dictionary = Dictionary.empty()
-            editDialogIsVisible = false
+            editDialogState = false
         }
     }
 
     fun editDictionary(dictionary: DictionaryInfo) {
         viewModelScope.launch {
             this@DictionaryListViewModel.dictionary = repository.getDictionaryById(dictionary.id).first()
-            editDialogIsVisible = true
+            editDialogState = true
         }
     }
 
     fun cancelEdit(){
         dictionary = Dictionary.empty()
-        editDialogIsVisible = false
+        editDialogState = false
     }
 
     fun removeDictionaries() = viewModelScope.launch(Dispatchers.Default) {
         checkedDictionaries.forEach { dictionary ->
             repository.deleteDictionaryById(dictionary.id)
         }
-        deleteLayoutIsVisible = false
+        deleteLayoutState = false
         checkedDictionaries = mutableListOf()
     }
 }

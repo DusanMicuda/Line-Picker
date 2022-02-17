@@ -17,7 +17,16 @@ class DictionaryViewModel @Inject constructor(
 ) : ViewModel() {
 
     lateinit var dictionary: State<Dictionary>
+    var randomizeDialogState by mutableStateOf(false)
+        private set
 
+    fun showRandomizeDialog() {
+        randomizeDialogState = true
+    }
+
+    fun cancelRandomize() {
+        randomizeDialogState = false
+    }
     fun getDictionary(id: Int) = repository.getDictionaryById(id)
 
     fun randomize(count: Int) {

@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -73,8 +74,8 @@ fun DictionaryListScreen(
         }
     }
 
-    LaunchedEffect(key1 = viewModel.deleteLayoutIsVisible) {
-        if (viewModel.deleteLayoutIsVisible)
+    LaunchedEffect(key1 = viewModel.deleteLayoutState) {
+        if (viewModel.deleteLayoutState)
             backPressedDispatcher?.addCallback(backPressedCallback)
         else
             backPressedCallback.remove()
@@ -83,10 +84,13 @@ fun DictionaryListScreen(
         onDispose { backPressedCallback.remove() }
     }
 
+    if (viewModel.editDialogState)
+        EditDialog()
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
-            if (!viewModel.deleteLayoutIsVisible) {
+            if (!viewModel.deleteLayoutState) {
                 FloatingActionButton(
                     onClick = { launcher.launch(intent) }
                 ) {
@@ -110,8 +114,6 @@ fun DictionaryListScreen(
         Background(dictionaryListIsEmpty = dictionaryList.isEmpty())
         ListOfDictionaries(navigator = navigator, dictionaryList = dictionaryList)
         AppBar(navigator = navigator)
-        if (viewModel.editDialogIsVisible)
-            EditDialog()
     }
 }
 
@@ -179,7 +181,7 @@ fun ListOfDictionariesItem(
                     style = MaterialTheme.typography.subtitle1
                 )
             }
-            if (viewModel.deleteLayoutIsVisible) {
+            if (viewModel.deleteLayoutState) {
                 Checkbox(
                     checked = checkBoxState,
                     onCheckedChange = { isChecked ->
@@ -248,73 +250,81 @@ fun EditDialog(
     var description by remember{ mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
 
-    name = viewModel.dictionary.name
-    if (viewModel.dictionary.assignment != null)
-        description = viewModel.dictionary.assignment!!
+    LaunchedEffect(true) {
+        name = viewModel.dictionary.name
+        if (viewModel.dictionary.assignment != null)
+            description = viewModel.dictionary.assignment!!
+    }
 
-    AlertDialog(
-        title = {
+
+    Dialog(
+        onDismissRequest = { viewModel.cancelEdit() }
+    ) {
+        Column(
+            modifier = Modifier
+                .background(
+                    MaterialTheme.colors.surface,
+                    MaterialTheme.shapes.medium
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = "Import file",
                 style = MaterialTheme.typography.h2
             )
-        },
-        text = {
-            Column(
-                verticalArrangement = Arrangement.SpaceEvenly
+            OutlinedTextField(
+                modifier = Modifier.padding(8.dp, 4.dp),
+                value = name,
+                label = { Text(text = "Name") },
+                onValueChange = { name = it }
+            )
+            OutlinedTextField(
+                modifier = Modifier.padding(8.dp, 4.dp),
+                value = description,
+                label = { Text(text = "Description") },
+                onValueChange = { description = it }
+            )
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .align(Alignment.Start),
+                text = errorMessage,
+                style = MaterialTheme.typography.h6
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.End
             ) {
-                OutlinedTextField(
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    value = name,
-                    label = { Text(text = "Name") },
-                    onValueChange = { name = it }
-                )
-                OutlinedTextField(
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    value = description,
-                    label = { Text(text = "Description") },
-                    onValueChange = { description = it }
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .offset(y = 8.dp),
-                    text = errorMessage,
-                    style = MaterialTheme.typography.h6
-                )
-            }
-        },
-        confirmButton = {
-            Button(
-                modifier = Modifier.offset((-8).dp, (-8).dp),
-                shape = MaterialTheme.shapes.large,
-                onClick = {
-                    if (name.isNotEmpty() && description.isNotEmpty()) {
-                        viewModel.insertDictionary(name, description)
-                    } else {
-                        errorMessage = when{
-                            description.isEmpty() ->
-                                "Description can`t be empty!"
-                            name.isEmpty() ->
-                                "Name can`t be empty!"
-                            else -> ""
+                OutlinedButton(
+                    modifier = Modifier.padding(4.dp),
+                    shape = MaterialTheme.shapes.large,
+                    onClick = { viewModel.cancelEdit() }
+                ) {
+                    Text(text = "Cancel")
+                }
+                Button(
+                    modifier = Modifier.padding(4.dp),
+                    shape = MaterialTheme.shapes.large,
+                    onClick = {
+                        if (name.isNotEmpty() && description.isNotEmpty()) {
+                            viewModel.insertDictionary(name, description)
+                        } else {
+                            errorMessage = when{
+                                description.isEmpty() ->
+                                    "Description can`t be empty!"
+                                name.isEmpty() ->
+                                    "Name can`t be empty!"
+                                else -> ""
+                            }
                         }
                     }
+                ) {
+                    Text(text = "Save")
                 }
-            ) {
-                Text(text = "Save")
             }
-        },
-        dismissButton = {
-            OutlinedButton(
-                modifier = Modifier.offset((-8).dp, (-8).dp),
-                shape = MaterialTheme.shapes.large,
-                onClick = { viewModel.cancelEdit() }
-            ) {
-                Text(text = "Cancel")
-            }
-        },
-        onDismissRequest = { viewModel.cancelEdit() }
-    )
+        }
+    }
 }
