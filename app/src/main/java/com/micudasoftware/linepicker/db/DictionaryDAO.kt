@@ -13,6 +13,12 @@ interface DictionaryDAO {
     @Delete
     suspend fun deleteDictionary(dictionary: Dictionary)
 
-    @Query("SELECT * FROM $DICTIONARY_TABLE_NAME ORDER BY id")
-    fun getAllDictionaries() : Flow<Dictionary>
+    @Query("DELETE FROM $DICTIONARY_TABLE_NAME WHERE id = :id")
+    fun deleteDictionaryById(id: Int)
+
+    @Query("SELECT name, description, id FROM $DICTIONARY_TABLE_NAME ORDER BY id")
+    fun getAllDictionaries() : Flow<List<DictionaryInfo>>
+
+    @Query("SELECT * FROM $DICTIONARY_TABLE_NAME WHERE id = :id")
+    fun getDictionaryById(id: Int) : Flow<Dictionary>
 }
