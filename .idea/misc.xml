@@ -3,6 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Projects/Line-Picker/app/src/main/res/layout/activity_main.xml" value="0.10989583333333333" />
+        <entry key="..\:/Projects/Line-Picker/app/src/main/res/layout/dictionary_list_item.xml" value="0.22826086956521738" />
+        <entry key="..\:/Projects/Line-Picker/app/src/main/res/layout/fragment_export.xml" value="0.22826086956521738" />
+        <entry key="..\:/Projects/Line-Picker/app/src/main/res/layout/fragment_import.xml" value="0.22826086956521738" />
+        <entry key="..\:/Projects/Line-Picker/app/src/main/res/layout/list_item.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/dusan/AndroidStudioProjects/LinePicker/app/src/main/res/drawable/curved_corners.xml" value="0.2703125" />
         <entry key="..\:/Users/dusan/AndroidStudioProjects/LinePicker/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/dusan/AndroidStudioProjects/LinePicker/app/src/main/res/layout/fragment_export.xml" value="0.25416666666666665" />

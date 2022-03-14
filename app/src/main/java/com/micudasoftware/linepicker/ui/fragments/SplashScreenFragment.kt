@@ -1,5 +1,6 @@
 package com.micudasoftware.linepicker.ui.fragments
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,11 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import com.micudasoftware.linepicker.R
 import com.micudasoftware.linepicker.ui.viewmodels.SplashScreenViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@SuppressLint("CustomSplashScreen")
+@AndroidEntryPoint
 class SplashScreenFragment: Fragment() {
 
     override fun onCreateView(
@@ -22,7 +26,7 @@ class SplashScreenFragment: Fragment() {
         (activity as AppCompatActivity).supportActionBar?.hide()
         activity?.window?.statusBarColor = Color.parseColor("#FFF5A0")
 
-        val viewModel = ViewModelProvider(this)[SplashScreenViewModel::class.java]
+        val viewModel : SplashScreenViewModel  by viewModels()
         viewModel.startTimer()
         viewModel.canContinue.observe(viewLifecycleOwner) {
             if (it) {

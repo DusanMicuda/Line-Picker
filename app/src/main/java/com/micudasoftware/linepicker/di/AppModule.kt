@@ -43,4 +43,9 @@ object AppModule {
         dictionaryDAO: DictionaryDAO,
         fileUtils: FileUtils
     ) = MainRepositoryImpl(dictionaryDAO, fileUtils)
+
+    @Singleton
+    @Provides
+    fun provideSharedPreferences(@ApplicationContext context: Context) =
+        context.getSharedPreferences("com.micudasoftware.linepicker", Context.MODE_PRIVATE)
 }

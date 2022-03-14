@@ -1,31 +1,31 @@
 package com.micudasoftware.linepicker.ui.viewmodels
 
-import android.app.Application
-import android.content.Context
-import android.os.Handler
-import androidx.lifecycle.AndroidViewModel
+
+import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SplashScreenViewModel(application: Application): AndroidViewModel(application) {
+@HiltViewModel
+class SplashScreenViewModel @Inject constructor(
+    private val preferences: SharedPreferences) : ViewModel() {
 
     var isFirstStart = true
-    private val _canContinue = MutableLiveData<Boolean>()
+    private val _canContinue = MutableLiveData(false)
     val canContinue: LiveData<Boolean>
         get() = _canContinue
 
-    init {
-        _canContinue.value = false
-    }
 
     fun startTimer() {
-        val preferences = getApplication<Application>()
-            .getSharedPreferences("com.micudasoftware.linepicker", Context.MODE_PRIVATE)
         isFirstStart = preferences.getBoolean("isFirstStart", true)
-        Handler().postDelayed(runnable, 3000)
-    }
-
-    private val runnable = Runnable {
-        _canContinue.value = true
+        viewModelScope.launch {
+            delay(3000)
+            _canContinue.value = true
+        }
     }
 }
