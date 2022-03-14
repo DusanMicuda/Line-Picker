@@ -37,7 +37,7 @@ import java.io.IOException
 class FileUtils(private val context: Context) {
 
     fun getDictionary(excelFile: Uri) : Dictionary{
-        val dictionary = arrayListOf(arrayListOf<String>())
+        val dictionary = ArrayList<ArrayList<String>>()
         val inputStream = context.contentResolver?.openInputStream(excelFile)
 
         val workbook: Workbook =
@@ -53,6 +53,7 @@ class FileUtils(private val context: Context) {
         var headerColumn3: String? = null
         val sheet = workbook.getSheetAt(0)
         for ((i, row: Row) in sheet.withIndex()) {
+            val listRow = ArrayList<String>()
             when (row.rowNum) {
                 0 -> if (row.cellIterator().hasNext())
                     assignment = row.cellIterator().next().stringCellValue
@@ -75,8 +76,8 @@ class FileUtils(private val context: Context) {
                     while (iterator.hasNext()) {
                         val cell = iterator.next()
                         when (cell.columnIndex) {
-                            1 -> dictionary[i][0] = cell.stringCellValue
-                            2 -> dictionary[i][1] = cell.stringCellValue
+                            1 -> listRow.add(cell.stringCellValue)
+                            2 -> listRow.add(cell.stringCellValue)
                             in 3..9 -> {
                                 if (cell.stringCellValue != "") {
                                     if (stringBuilder.toString() != "")
@@ -87,9 +88,10 @@ class FileUtils(private val context: Context) {
 
                         }
                     }
-                    dictionary[i][2] = stringBuilder.toString()
+                    listRow.add(stringBuilder.toString())
                 }
             }
+            dictionary.add(listRow)
         }
         return Dictionary(
             name = getFileName(excelFile),
