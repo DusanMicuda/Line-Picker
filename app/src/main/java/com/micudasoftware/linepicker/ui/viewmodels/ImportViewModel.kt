@@ -2,16 +2,25 @@ package com.micudasoftware.linepicker.ui.viewmodels
 
 import android.content.Intent
 import android.net.Uri
+import android.view.View
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.findNavController
+import com.micudasoftware.linepicker.R
+import com.micudasoftware.linepicker.db.DictionaryInfo
 import com.micudasoftware.linepicker.repository.MainRepository
+import com.micudasoftware.linepicker.ui.adapters.DictionaryListAdapter
+import com.micudasoftware.linepicker.ui.adapters.DictionaryListItemListener
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
+@HiltViewModel
 class ImportViewModel @Inject constructor(
     private val repository: MainRepository
-) : ViewModel() {
+) : ViewModel(), DictionaryListItemListener {
 
     private val xls = "application/vnd.ms-excel"
     private val xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -24,9 +33,25 @@ class ImportViewModel @Inject constructor(
 
     val dictionaries = repository.getAllDictionaries()
 
-    fun getDictionary(uri: Uri) =
+    val adapter = DictionaryListAdapter(listOf(), this)
+
+    init {
         viewModelScope.launch {
-            val dictionary = repository.getDictionaryFromFile(uri)
+            dictionaries.collect {
+                adapter.updateData(it)
+            }
+        }
+    }
+
+    fun getDictionary(uri: Uri) {
+        val dictionary = repository.getDictionaryFromFile(uri)
+        viewModelScope.launch {
             repository.insertDictionary(dictionary)
         }
+    }
+
+    override fun onDictionaryListItemClick(view: View, item: DictionaryInfo) {
+        view.findNavController().navigate(R.id.action_importFragment_to_randomizeFragment)
+    }
+
 }

@@ -29,6 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class ImportFragment : Fragment() {
 
     private val viewModel: ImportViewModel by viewModels()
+    private lateinit var binding: FragmentImportBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,12 +38,16 @@ class ImportFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.show()
         activity?.window?.statusBarColor = resources.getColor(R.color.colorPrimaryVariant)
 
-        val binding: FragmentImportBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_import, container, false)
+        binding = DataBindingUtil
+            .inflate(inflater, R.layout.fragment_import, container, false)
 
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.dictionaryList.layoutManager = LinearLayoutManager(context)
+        binding.apply {
+            viewModel = viewModel
+            fragment = this@ImportFragment
+            lifecycleOwner = viewLifecycleOwner
+            dictionaryList.layoutManager = LinearLayoutManager(context)
+            dictionaryList.adapter = this@ImportFragment.viewModel.adapter
+        }
 
         return binding.root
     }

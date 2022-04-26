@@ -15,9 +15,6 @@ class MainRepositoryImpl @Inject constructor(
     override suspend fun insertDictionary(dictionary: Dictionary) =
         dictionaryDAO.insertDictionary(dictionary)
 
-    override suspend fun deleteDictionary(dictionary: Dictionary) =
-        dictionaryDAO.deleteDictionary(dictionary)
-
     override suspend fun deleteDictionaryById(id: Int) =
         dictionaryDAO.deleteDictionaryById(id)
 

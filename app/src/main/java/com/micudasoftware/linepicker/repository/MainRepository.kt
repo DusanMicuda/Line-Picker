@@ -9,8 +9,6 @@ interface MainRepository {
 
     suspend fun insertDictionary(dictionary: Dictionary)
 
-    suspend fun deleteDictionary(dictionary: Dictionary)
-
     suspend fun deleteDictionaryById(id: Int)
 
     fun getAllDictionaries() : Flow<List<DictionaryInfo>>

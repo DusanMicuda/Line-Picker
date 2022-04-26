@@ -1,26 +1,26 @@
 package com.micudasoftware.linepicker.ui.adapters
 
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import android.view.View
 import com.micudasoftware.linepicker.R
-import com.micudasoftware.linepicker.db.Dictionary
-import kotlinx.coroutines.flow.Flow
+import com.micudasoftware.linepicker.databinding.ItemDictionaryBinding
+import com.micudasoftware.linepicker.db.DictionaryInfo
 
-class DictionaryListAdapter(private val dictionaries: Flow<List<Dictionary>>): RecyclerView.Adapter<ListViewHolder>() {
+class DictionaryListAdapter(
+    list: List<DictionaryInfo>,
+    private val listener: DictionaryListItemListener
+) : BaseAdapter<ItemDictionaryBinding, DictionaryInfo>(list) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.list_item, parent, false)
+    override val layoutId: Int = R.layout.item_dictionary
 
-        return ListViewHolder(view)
+    override fun bind(binding: ItemDictionaryBinding, item: DictionaryInfo) {
+        binding.apply {
+            dictionary = item
+            listener = this@DictionaryListAdapter.listener
+            executePendingBindings()
+        }
     }
+}
 
-    override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        holder.setRowData(rows[position])
-    }
-
-    override fun getItemCount(): Int {
-        return rows.size
-    }
+interface DictionaryListItemListener {
+    fun onDictionaryListItemClick(view: View, item: DictionaryInfo)
 }
