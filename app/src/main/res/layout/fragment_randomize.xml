@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.micudasoftware.linepicker.ui.viewmodels.MainViewModel" />
+            type="com.micudasoftware.linepicker.ui.viewmodels.RandomizeViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -28,14 +28,14 @@
                 app:title="@string/app_name">
 
                 <TextView
-                    android:id="@+id/assignment"
+                    android:id="@+id/textAssignment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:layout_margin="8dp"
                     app:layout_collapseMode="pin"
-                    android:visibility="@{viewModel.getAssignmentVisibility()}"
-                    android:text="@{viewModel.assignment}"
+                    android:visibility="@{viewModel.assignmentVisibility}"
+                    android:text="@{viewModel.dictionary.assignment}"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -50,14 +50,14 @@
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/header"
+                android:id="@+id/textHeader"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 app:cardCornerRadius="10dp"
                 android:paddingHorizontal="4dp"
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginTop="8dp"
-                android:visibility="@{viewModel.getHeaderVisibility()}"
+                android:visibility="@{viewModel.headerVisibility}"
                 app:layout_constraintBottom_toTopOf="@id/randomizeList"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +73,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
-                        android:text="@{viewModel.headerColumn1}"
+                        android:text="@{viewModel.dictionary.headerColumn1}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/column2"
                         app:layout_constraintStart_toStartOf="parent"
@@ -84,7 +84,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
-                        android:text="@{viewModel.headerColumn2}"
+                        android:text="@{viewModel.dictionary.headerColumn2}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/column3"
                         app:layout_constraintStart_toEndOf="@+id/column1"
@@ -95,13 +95,14 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
-                        android:text="@{viewModel.headerColumn3}"
+                        android:text="@{viewModel.dictionary.headerColumn3}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/column2"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
             </androidx.cardview.widget.CardView>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -110,10 +111,12 @@
                 android:layout_height="0dp"
                 android:paddingBottom="116dp"
                 android:clipToPadding="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:adapter="@{viewModel.adapter}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/header"/>
+                app:layout_constraintTop_toBottomOf="@id/textHeader"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -132,7 +135,8 @@
                     android:layout_height="match_parent"
                     android:inputType="number"
                     android:textStyle="italic"
-                    android:hint="@{viewModel.hint}"
+                    android:hint="@{@string/hint(viewModel.dictionary.dictionary.size)}"
+                    android:text="@={viewModel.count}"
                     android:autofillHints="none"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/randomize"
@@ -146,12 +150,16 @@
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:text="@string/randomize_button"
+                    android:onClick="@{viewModel::randomize}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/count"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </layout>

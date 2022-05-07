@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_randomizeFragment_to_exportFragment"
             app:destination="@id/exportFragment" />
+        <argument
+            android:name="dictionaryId"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/exportFragment"

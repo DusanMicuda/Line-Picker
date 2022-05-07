@@ -10,7 +10,7 @@ class ListAdapter(private val rows: ArrayList<Row>): RecyclerView.Adapter<ListVi
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.list_item, parent, false)
+            .inflate(R.layout.item_row, parent, false)
 
         return ListViewHolder(view)
     }

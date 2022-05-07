@@ -5,43 +5,36 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.text.isDigitsOnly
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.micudasoftware.linepicker.ui.adapters.ListAdapter
-import com.micudasoftware.linepicker.ui.viewmodels.MainViewModel
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.micudasoftware.linepicker.R
 import com.micudasoftware.linepicker.databinding.FragmentRandomizeBinding
+import com.micudasoftware.linepicker.ui.viewmodels.RandomizeViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RandomizeFragment : Fragment() {
+
+    private val args by navArgs<RandomizeFragmentArgs>()
+    private val viewModel: RandomizeViewModel by viewModels()
+    private lateinit var binding: FragmentRandomizeBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding: FragmentRandomizeBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_randomize, container, false)
-        val viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = viewLifecycleOwner
-
-        binding.randomizeList.layoutManager = LinearLayoutManager(activity)
-
-        viewModel.rows.observe(viewLifecycleOwner) {
-            binding.randomizeList.adapter = ListAdapter(it)
+        binding = DataBindingUtil.inflate<FragmentRandomizeBinding?>(
+            inflater,
+            R.layout.fragment_randomize,
+            container,
+            false
+        ).apply {
+            viewModel = this@RandomizeFragment.viewModel
+            lifecycleOwner = viewLifecycleOwner
         }
 
-        binding.randomize.setOnClickListener {
-                if (!binding.count.text.isNullOrBlank() &&
-                    binding.count.text.isDigitsOnly() &&
-                    viewModel.randomize(binding.count.text.toString().toInt()))
-                        view?.findNavController()?.navigate(R.id.action_randomizeFragment_to_exportFragment)
-                else
-                    Toast.makeText(requireContext(), "Count isn`t in range!", Toast.LENGTH_SHORT).show()
-        }
+        viewModel.loadDictionary(args.dictionaryId)
 
         return binding.root
     }

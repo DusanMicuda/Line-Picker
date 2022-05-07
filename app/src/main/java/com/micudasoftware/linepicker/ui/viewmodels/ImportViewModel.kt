@@ -4,15 +4,13 @@ import android.content.Intent
 import android.net.Uri
 import android.view.View
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
-import com.micudasoftware.linepicker.R
 import com.micudasoftware.linepicker.db.DictionaryInfo
 import com.micudasoftware.linepicker.repository.MainRepository
 import com.micudasoftware.linepicker.ui.adapters.DictionaryListAdapter
 import com.micudasoftware.linepicker.ui.adapters.DictionaryListItemListener
-import dagger.hilt.android.AndroidEntryPoint
+import com.micudasoftware.linepicker.ui.fragments.ImportFragmentDirections
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -51,7 +49,9 @@ class ImportViewModel @Inject constructor(
     }
 
     override fun onDictionaryListItemClick(view: View, item: DictionaryInfo) {
-        view.findNavController().navigate(R.id.action_importFragment_to_randomizeFragment)
+        view.findNavController().navigate(
+            ImportFragmentDirections.actionImportFragmentToRandomizeFragment(item.id)
+        )
     }
 
 }
