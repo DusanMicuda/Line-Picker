@@ -14,6 +14,7 @@
             android:id="@+id/action_importFragment_to_randomizeFragment"
             app:destination="@id/randomizeFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/randomizeFragment"
         android:name="com.micudasoftware.linepicker.ui.fragments.RandomizeFragment"
@@ -25,12 +26,17 @@
         <argument
             android:name="dictionaryId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_randomizeFragment_to_randomizeDialog"
+            app:destination="@id/randomizeDialog" />
     </fragment>
+
     <fragment
         android:id="@+id/exportFragment"
         android:name="com.micudasoftware.linepicker.ui.fragments.ExportFragment"
         android:label="fragment_export"
         tools:layout="@layout/fragment_export" />
+
     <fragment
         android:id="@+id/splashScreenFragment"
         android:name="com.micudasoftware.linepicker.ui.fragments.SplashScreenFragment"
@@ -46,6 +52,7 @@
             app:popUpTo="@id/splashScreenFragment"
             app:popUpToInclusive="true" />
     </fragment>
+
     <fragment
         android:id="@+id/PDFFragment"
         android:name="com.micudasoftware.linepicker.ui.fragments.PDFFragment"
@@ -63,6 +70,7 @@
             app:argType="boolean"
             android:defaultValue="false" />
     </fragment>
+
     <action android:id="@+id/action_global_PDFFragment" app:destination="@id/PDFFragment">
         <argument
             android:name="file"
@@ -71,4 +79,10 @@
             android:name="isFirstStart"
             android:defaultValue="false" />
     </action>
+
+    <dialog
+        android:id="@+id/randomizeDialog"
+        android:name="com.micudasoftware.linepicker.ui.fragments.RandomizeDialog"
+        android:label="RandomizeDialog" />
+
 </navigation>
