@@ -91,4 +91,11 @@ class RandomizeViewModel @Inject constructor(
             }
         }
     }
+
+    fun exportToPdf() {
+        viewModelScope.launch {
+            if (fragmentState.value == DictionaryFragmentState.Loaded)
+                dictionary.value?.let { repository.exportDictionaryToPDF(it) }
+        }
+    }
 }

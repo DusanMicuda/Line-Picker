@@ -2,6 +2,7 @@ package com.micudasoftware.linepicker.fileutils
 
 import android.app.Notification
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
@@ -274,7 +275,7 @@ class FileUtils(private val context: Context) {
             intent.setDataAndType(uri, "application/pdf")
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+            val pendingIntent = PendingIntent.getActivity(context, 0, intent, FLAG_IMMUTABLE)
             val builder: NotificationCompat.Builder = NotificationCompat.Builder(context, "1")
                 .setSmallIcon(R.drawable.statusbaricon)
                 .setContentTitle("PDF file generated successfully")
